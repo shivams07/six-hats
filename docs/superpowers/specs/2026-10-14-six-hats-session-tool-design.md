@@ -15,7 +15,8 @@ Some participants do not have claude.ai accounts, so this is a standalone app ra
 |---|---|
 | Format | Live, every participant on their own device, one shared board |
 | Hat flow | Facilitator-designed sequence; each step has its own hat, timer and optional prompt |
-| Visibility | A step's points are private to their author while writing; at 0:00 writing locks and all points auto-reveal to everyone. Facilitator can reveal early |
+| Writing mode | Chosen at creation. **Everyone writes**: each person writes their own points. **Scribe**: one participant, assigned in the lobby and reassignable by the host at any time, captures notes for everyone and credits each note to whoever said it (default "Team") |
+| Visibility | Everyone-writes mode: a step's points are private to their author while writing; at 0:00 writing locks and all points auto-reveal to everyone. Facilitator can reveal early. Scribe mode: notes are visible to everyone as they are typed; writing still locks at 0:00 |
 | Attribution | Points always show their author's name |
 | Outputs | Dot-voting, Blue-hat decision + action items, Markdown export, past-session archive |
 | Access | No accounts. Participants join by link or 6-character code + name. Facilitator holds a private admin link. A single team passcode gates creating sessions, the archive and templates |
@@ -117,7 +118,7 @@ The step reaches `revealed` when the timer hits 0:00 (`timerExpired`), when the 
 
 ### 6.1 Create
 
-Facilitator, with team passcode. Inputs: title (≤120), focus question (≤500), facilitator's own display name (≤40), votes per person (1–10, default 3), and the flow.
+Facilitator, with team passcode. Inputs: title (≤120), focus question (≤500), facilitator's own display name (≤40), votes per person (1–10, default 3), writing mode (Everyone writes / Scribe, default Everyone writes), and the flow.
 
 **Flow builder.** An ordered list of 1–20 steps. Each step: hat (any of six, repeats allowed), duration (0:30–30:00, defaults per §5), optional prompt (≤300) overriding the hat's default. Add, remove, duplicate, reorder (up/down buttons). Shows total planned time. Start from a preset, a team template, or blank. **Save as team template** stores the current flow under a name (≤60).
 
@@ -125,7 +126,7 @@ On create the facilitator receives the participant link `/s/<CODE>`, the 6-chara
 
 ### 6.2 Lobby
 
-Participants open the link or enter the code on Home, then enter a name. Names are trimmed, ≤40 chars, unique per session case-insensitively (a duplicate becomes `Name (2)`). Joining is rejected once a session has 50 participants. The roster shows everyone with an online dot. Facilitator presses **Start**, which puts step 0 into `writing`.
+Participants open the link or enter the code on Home, then enter a name. Names are trimmed, ≤40 chars, unique per session case-insensitively (a duplicate becomes `Name (2)`). Joining is rejected once a session has 50 participants. The roster shows everyone with an online dot. In scribe mode the facilitator picks the scribe from the roster (themselves included), and **Start** is refused until a scribe is set. Facilitator presses **Start**, which puts step 0 into `writing`.
 
 ### 6.3 Steps
 
@@ -137,6 +138,7 @@ Everyone sees the step number ("Step 3 of 7"), hat badge, prompt, focus question
 - **Revealed** points list chronologically with author names. Discussion happens out loud.
 - **Editing upcoming steps.** Mid-session the facilitator may change hat, duration or prompt of, reorder, add or remove any step with index greater than the current one. Past and current steps are immutable apart from the timer controls. The total stays within 1–20 steps.
 - **Late joiners** can write in the current step and see all revealed steps.
+- **Scribe mode.** Only the scribe adds, edits and deletes notes, and only in the current step while it is writing or paused. Each note has an optional "said by" participant; without one it is credited to "Team". Notes are visible to everyone as soon as they are written, so the facilitator sees the notes themselves rather than per-person counts. The timer, pause, +1 min and auto-lock at 0:00 work as in everyone-writes mode. The facilitator can hand the scribe role to anyone in the lobby or during the steps. The facilitator can still delete any note. Up to 200 notes per step.
 
 ### 6.4 Voting
 
@@ -163,9 +165,10 @@ All mutations are Socket.IO `command` events with an ack. The engine validates a
 | `skipStep` | facilitator | running, writing or paused (reveals, then advances) |
 | `nextStep` | facilitator | running, revealed |
 | `editUpcomingSteps(steps)` | facilitator | lobby (all steps) or running (steps after current) |
-| `deletePoint(id)` | facilitator: any point; author: own point in current step while writing/paused | running |
-| `addPoint(text)` | any participant | running, current step writing or paused |
-| `editPoint(id, text)` | author | running, own point in current step, writing or paused |
+| `setScribe(participantId)` | facilitator | scribe mode; lobby or running |
+| `deletePoint(id)` | facilitator: any point; author (everyone mode) or scribe (scribe mode): a point in the current step while writing/paused | running |
+| `addPoint(text, saidBy?)` | any participant (everyone mode); the scribe (scribe mode) | running, current step writing or paused; `saidBy` is used only in scribe mode |
+| `editPoint(id, text, saidBy?)` | author (everyone mode); the scribe (scribe mode) | running, point in current step, writing or paused |
 | `vote(pointId)` / `unvote(pointId)` | any participant | voting, not closed, within limit |
 | `closeVoting` / `skipVoting` | facilitator | voting |
 | `goToDecision` | facilitator | voting with votingClosed |
@@ -179,8 +182,8 @@ After every accepted command the server sends each connected viewer a complete `
 
 **Redaction rules, enforced only in `views.ts`:**
 
-1. For a step not yet revealed, a viewer receives only points they authored. This applies to the facilitator too.
-2. The facilitator's View additionally carries `currentStepCounts: {participantId: number}` — counts only.
+1. In everyone-writes mode, for a step not yet revealed, a viewer receives only points they authored. This applies to the facilitator too. In scribe mode every note is visible to everyone as soon as it is written.
+2. In everyone-writes mode, while running, the facilitator's View additionally carries `currentStepCounts: {participantId: number}` — counts only.
 3. While voting is open, a viewer receives only their own votes and remaining count. Totals appear only once `votingClosed`.
 4. Tokens and token hashes never appear in any View.
 
@@ -212,7 +215,7 @@ CREATE TABLE templates (
 );
 ```
 
-The `Session` document holds steps, participants (id, name, isFacilitator, tokenHash, joinedAt), facilitator token hashes, points (id, stepIndex, authorId, text, createdAt, updatedAt), votes (pointId, voterId), votesPerPerson, votingClosed, decision, actions, current step index, phase, `endsAt`, `remainingMs`. A large session is tens of KB, so rewriting the whole document per command is cheap and keeps the store trivial. Deleted points are removed from the document.
+The `Session` document holds mode (`everyone` | `scribe`), scribeId, steps, participants (id, name, isFacilitator, tokenHash, joinedAt), facilitator token hashes, points (id, stepIndex, authorId, saidBy, text, createdAt, updatedAt), votes (pointId, voterId), votesPerPerson, votingClosed, decision, actions, current step index, phase, `endsAt`, `remainingMs`. A large session is tens of KB, so rewriting the whole document per command is cheap and keeps the store trivial. Deleted points are removed from the document.
 
 **Write path:** engine computes next session → `store.save` (synchronous) → on success replace in-memory copy, re-arm timer, broadcast; on failure reject the command and log. Memory and disk never diverge.
 
@@ -237,7 +240,7 @@ Socket.IO handshake: `auth: {code, token}`. Unknown code or bad token → connec
 
 ```markdown
 # Six Hats: <title>
-_<date> · Facilitator: <name> · <n> participants_
+_<date> · Facilitator: <name> · <n> participants[ · Scribe: <name>]_
 
 **Focus question:** <focus>
 
@@ -257,7 +260,7 @@ _<date> · Facilitator: <name> · <n> participants_
 - <point> — <author> (2 votes)
 ```
 
-Sections with no content are omitted. Vote counts appear only if voting was closed.
+Sections with no content are omitted. Vote counts appear only if voting was closed. Points are credited to their author in everyone-writes mode, and to their "said by" participant (or "Team") in scribe mode.
 
 ## 13. Web pages
 
@@ -287,11 +290,11 @@ All user text renders through Vue text interpolation; `v-html` is never used on 
 ## 15. Testing
 
 **Unit (Vitest), pure modules:**
-- `engine`: every command's allowed and rejected states; auto-reveal on `timerExpired` and early/stale `timerExpired` ignored; pause/resume/addTime arithmetic; edit-upcoming cannot touch past or current steps and keeps 1–20 steps; vote limit, one-per-point, unvote; facilitator-only commands rejected for participants; input limits; duplicate-name suffixing.
-- `views`: **no viewer ever receives another person's point from an unrevealed step** (property-style test over random sessions and viewers), facilitator gets counts not text, vote totals hidden until closed, no token material in any View.
-- `export`: snapshot of a complete session; omitted empty sections; no vote counts when voting skipped.
+- `engine`: every command's allowed and rejected states; auto-reveal on `timerExpired` and early/stale `timerExpired` ignored; pause/resume/addTime arithmetic; edit-upcoming cannot touch past or current steps and keeps 1–20 steps; vote limit, one-per-point, unvote; scribe mode: only the scribe writes, `saidBy` validated, Start needs a scribe, scribe reassignment; facilitator-only commands rejected for participants; input limits; duplicate-name suffixing.
+- `views`: **no viewer ever receives another person's point from an unrevealed step** (property-style test over random sessions and viewers), facilitator gets counts not text, scribe notes visible to all live with "said by" names, vote totals hidden until closed, no token material in any View.
+- `export`: snapshot of a complete session; omitted empty sections; no vote counts when voting skipped; scribe-mode crediting.
 
-**Integration:** start the real server on a random port with a temp `DATA_DIR`; one facilitator and two participant Socket.IO clients run create → join → write → auto-reveal (1-second step) → vote → close voting → decision → close → `summary.md`. A second test restarts the server mid-step and asserts the session and timer resume.
+**Integration:** start the real server on a random port with a temp `DATA_DIR`; one facilitator and two participant Socket.IO clients run create → join → write → auto-reveal (1-second step) → vote → close voting → decision → close → `summary.md`. A scribe-mode test checks that only the scribe can write and that notes reach other participants live. A further test restarts the server mid-step and asserts the session and timer resume.
 
 **Manual:** run locally with three browser windows (one facilitator, two participants, one at phone width) through a full session before handover.
 
