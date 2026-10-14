@@ -38,3 +38,23 @@ export function run(s: Session, actorId: string | null, cmd: AnyCommand, now = T
   if (!r.ok) throw new Error(r.error);
   return r.session;
 }
+
+export function pointId(s: Session, text: string): string {
+  const p = s.points.find((pt) => pt.text === text);
+  if (!p) throw new Error(`No point "${text}"`);
+  return p.id;
+}
+
+/** Runs both default steps and stops at the start of voting. */
+export function toVoting() {
+  const { s: lobby, fac, asha, ravi } = makeSession();
+  let s = run(lobby, fac, { type: 'start' });
+  s = run(s, asha, { type: 'addPoint', text: 'Churn is 4% monthly' }, T0 + 1);
+  s = run(s, ravi, { type: 'addPoint', text: 'No data on\nenterprise' }, T0 + 2);
+  s = run(s, fac, { type: 'revealNow' });
+  s = run(s, fac, { type: 'nextStep' });
+  s = run(s, fac, { type: 'addPoint', text: 'Migration risk' }, T0 + 3);
+  s = run(s, fac, { type: 'revealNow' });
+  s = run(s, fac, { type: 'nextStep' });
+  return { s, fac, asha, ravi };
+}

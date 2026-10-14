@@ -1,5 +1,6 @@
 import { LIMITS } from '../../shared/src/hats.js';
 import type { Command } from '../../shared/src/protocol.js';
+import { CONTRIBUTION_HANDLERS } from './contributions.js';
 import { FLOW_HANDLERS, timerExpired } from './flow.js';
 import type { Ctx, Handler, HandlerMap, Session } from './session.js';
 import { cleanText, validateMode, validateSteps, validateVotes } from './validate.js';
@@ -93,7 +94,7 @@ export type ServerCommand = { type: 'timerExpired' };
 export type AnyCommand = Command | ServerCommand;
 export type EngineResult = { ok: true; session: Session } | { ok: false; error: string };
 
-const HANDLERS: Partial<HandlerMap<Command['type']>> = { ...FLOW_HANDLERS };
+const HANDLERS: HandlerMap<Command['type']> = { ...FLOW_HANDLERS, ...CONTRIBUTION_HANDLERS };
 
 const FACILITATOR_ONLY = new Set<string>([
   'start', 'pause', 'resume', 'addTime', 'revealNow', 'skipStep', 'nextStep', 'editUpcomingSteps', 'setScribe',
