@@ -1,31 +1,17 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed } from 'vue';
 import type { Command, View } from '@shared/protocol';
 import { canWrite } from '@shared/rules';
+import { useCooldownGuard } from '../cooldown';
 import { useRun } from '../session-context';
-
-const COOLDOWN_MS = 500;
 
 const props = defineProps<{ view: View }>();
 const run = useRun();
 const writable = computed(() => canWrite(props.view));
 const isLast = computed(() => props.view.currentStep >= props.view.steps.length - 1);
-const pending = ref(false);
-let cooldown: ReturnType<typeof setTimeout> | undefined;
+const { pending, guarded } = useCooldownGuard();
 
-async function act(cmd: Command) {
-  if (pending.value) return;
-  pending.value = true;
-  try {
-    await run(cmd);
-  } finally {
-    cooldown = setTimeout(() => {
-      pending.value = false;
-    }, COOLDOWN_MS);
-  }
-}
-
-onBeforeUnmount(() => clearTimeout(cooldown));
+const act = (cmd: Command) => guarded(() => run(cmd));
 </script>
 
 <template>

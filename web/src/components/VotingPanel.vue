@@ -1,33 +1,19 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed } from 'vue';
 import type { Command, View } from '@shared/protocol';
+import { useCooldownGuard } from '../cooldown';
 import { topVoted } from '../points';
 import { useRun } from '../session-context';
 import RankedList from './RankedList.vue';
 import StepGroups from './StepGroups.vue';
 
-const COOLDOWN_MS = 500;
-
 const props = defineProps<{ view: View }>();
 const run = useRun();
 const all = computed(() => props.view.steps.map((_, i) => i));
 const left = computed(() => props.view.votesPerPerson - props.view.myVotes.length);
-const pending = ref(false);
-let cooldown: ReturnType<typeof setTimeout> | undefined;
+const { pending, guarded } = useCooldownGuard();
 
-async function act(cmd: Command) {
-  if (pending.value) return;
-  pending.value = true;
-  try {
-    await run(cmd);
-  } finally {
-    cooldown = setTimeout(() => {
-      pending.value = false;
-    }, COOLDOWN_MS);
-  }
-}
-
-onBeforeUnmount(() => clearTimeout(cooldown));
+const act = (cmd: Command) => guarded(() => run(cmd));
 </script>
 
 <template>

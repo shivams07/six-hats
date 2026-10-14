@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { LIMITS } from '@shared/hats';
 import type { View } from '@shared/protocol';
+import { useCooldownGuard } from '../cooldown';
 import { topVoted } from '../points';
 import { useRun } from '../session-context';
 import ActionList from './ActionList.vue';
 import RankedList from './RankedList.vue';
-
-const COOLDOWN_MS = 500;
 
 const props = defineProps<{ view: View }>();
 const run = useRun();
@@ -23,20 +22,7 @@ watch(
 const dirty = computed(() => draft.value.trim() !== props.view.decision);
 const ranked = computed(() => topVoted(props.view));
 const action = reactive({ text: '', owner: '', due: '' });
-const pending = ref(false);
-let cooldown: ReturnType<typeof setTimeout> | undefined;
-
-async function guarded(fn: () => Promise<void>) {
-  if (pending.value) return;
-  pending.value = true;
-  try {
-    await fn();
-  } finally {
-    cooldown = setTimeout(() => {
-      pending.value = false;
-    }, COOLDOWN_MS);
-  }
-}
+const { pending, guarded } = useCooldownGuard();
 
 async function saveDecision() {
   await run({ type: 'setDecision', text: draft.value });
@@ -54,8 +40,6 @@ const closeSession = () =>
     if (dirty.value && !(await run({ type: 'setDecision', text: draft.value }))) return;
     await run({ type: 'closeSession' });
   });
-
-onBeforeUnmount(() => clearTimeout(cooldown));
 </script>
 
 <template>

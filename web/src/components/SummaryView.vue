@@ -12,14 +12,22 @@ import StepGroups from './StepGroups.vue';
 const props = defineProps<{ view: View; token: string }>();
 const all = computed(() => props.view.steps.map((_, i) => i));
 const markdown = ref<string | null>(null);
+const loading = ref(false);
+const loadError = ref('');
 
-onMounted(async () => {
+async function load() {
+  loading.value = true;
+  loadError.value = '';
   try {
     markdown.value = await api.summaryMarkdown(props.view.code, props.token);
   } catch (e) {
-    showToast(errorMessage(e));
+    loadError.value = errorMessage(e);
+  } finally {
+    loading.value = false;
   }
-});
+}
+
+onMounted(load);
 
 async function copy() {
   if (!markdown.value) return;
@@ -41,6 +49,10 @@ function download() {
         <button class="btn btn-primary" :disabled="!markdown" @click="download">Download .md</button>
       </div>
     </div>
+    <p v-if="loadError" class="error row wrap" role="alert">
+      <span>Could not load the Markdown: {{ loadError }}</span>
+      <button class="btn btn-small" :disabled="loading" @click="load">Retry</button>
+    </p>
     <p class="muted small">Closed {{ new Date(view.closedAt ?? view.createdAt).toLocaleString() }}</p>
     <h3>Decision</h3>
     <p class="decision">{{ view.decision || 'No decision recorded.' }}</p>
