@@ -1,5 +1,7 @@
 import { LIMITS } from '../../shared/src/hats.js';
-import type { Ctx, Session } from './session.js';
+import type { Command } from '../../shared/src/protocol.js';
+import { FLOW_HANDLERS, timerExpired } from './flow.js';
+import type { Ctx, Handler, HandlerMap, Session } from './session.js';
 import { cleanText, validateMode, validateSteps, validateVotes } from './validate.js';
 
 export interface SessionInit {
@@ -85,4 +87,36 @@ export function addFacilitatorToken(s: Session, tokenHash: string): Session {
   const next = structuredClone(s);
   next.participants.find((p) => p.isFacilitator)?.tokenHashes.push(tokenHash);
   return next;
+}
+
+export type ServerCommand = { type: 'timerExpired' };
+export type AnyCommand = Command | ServerCommand;
+export type EngineResult = { ok: true; session: Session } | { ok: false; error: string };
+
+const HANDLERS: Partial<HandlerMap<Command['type']>> = { ...FLOW_HANDLERS };
+
+const FACILITATOR_ONLY = new Set<string>([
+  'start', 'pause', 'resume', 'addTime', 'revealNow', 'skipStep', 'nextStep', 'editUpcomingSteps', 'setScribe',
+  'closeVoting', 'skipVoting', 'goToDecision', 'setDecision', 'addAction', 'removeAction', 'closeSession',
+]);
+
+const fail = (error: string): EngineResult => ({ ok: false, error });
+const finish = (s: Session, error: string | void): EngineResult => (error ? fail(error) : { ok: true, session: s });
+
+/** Pure: returns a new session or an error; never mutates `session`. `actorId` is null only for server commands. */
+export function applyCommand(session: Session, actorId: string | null, cmd: AnyCommand, ctx: Ctx): EngineResult {
+  const type: unknown = (cmd as { type?: unknown } | null)?.type;
+  if (type === 'timerExpired') {
+    if (actorId !== null) return fail('Unknown command');
+    const s = structuredClone(session);
+    return finish(s, timerExpired(s, ctx.now));
+  }
+  if (typeof type !== 'string' || !Object.hasOwn(HANDLERS, type)) return fail('Unknown command');
+  if (!session.participants.some((p) => p.id === actorId)) return fail('You are not part of this session');
+
+  const s = structuredClone(session);
+  const actor = s.participants.find((p) => p.id === actorId)!;
+  if (FACILITATOR_ONLY.has(type) && !actor.isFacilitator) return fail('Only the facilitator can do that');
+  const handler = HANDLERS[type as Command['type']] as Handler<Command>;
+  return finish(s, handler(s, actor, cmd as Command, ctx));
 }

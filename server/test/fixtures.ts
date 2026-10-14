@@ -1,7 +1,7 @@
 import type { FlowStep } from '../../shared/src/hats.js';
 import type { WritingMode } from '../../shared/src/protocol.js';
-import { createSession, joinSession } from '../src/engine.js';
-import type { Ctx } from '../src/session.js';
+import { applyCommand, createSession, joinSession, type AnyCommand, type EngineResult } from '../src/engine.js';
+import type { Ctx, Session } from '../src/session.js';
 
 export const T0 = Date.UTC(2026, 9, 14, 10, 0, 0);
 
@@ -27,4 +27,14 @@ export function makeSession(steps: FlowStep[] = DEFAULT_STEPS, mode: WritingMode
   const ravi = joinSession(asha.session, 'Ravi', 'ravi-hash', ctx());
   if (!ravi.ok) throw new Error(ravi.error);
   return { s: ravi.session, fac: created.facilitatorId, asha: asha.participantId, ravi: ravi.participantId };
+}
+
+export function attempt(s: Session, actorId: string | null, cmd: AnyCommand, now = T0): EngineResult {
+  return applyCommand(s, actorId, cmd, ctx(now));
+}
+
+export function run(s: Session, actorId: string | null, cmd: AnyCommand, now = T0): Session {
+  const r = attempt(s, actorId, cmd, now);
+  if (!r.ok) throw new Error(r.error);
+  return r.session;
 }
