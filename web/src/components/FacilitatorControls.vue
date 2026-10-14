@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import type { Command, View } from '@shared/protocol';
 import { canWrite } from '@shared/rules';
 import { useRun } from '../session-context';
+
+const COOLDOWN_MS = 500;
 
 const props = defineProps<{ view: View }>();
 const run = useRun();
 const writable = computed(() => canWrite(props.view));
 const isLast = computed(() => props.view.currentStep >= props.view.steps.length - 1);
 const pending = ref(false);
+let cooldown: ReturnType<typeof setTimeout> | undefined;
 
 async function act(cmd: Command) {
   if (pending.value) return;
@@ -16,9 +19,13 @@ async function act(cmd: Command) {
   try {
     await run(cmd);
   } finally {
-    pending.value = false;
+    cooldown = setTimeout(() => {
+      pending.value = false;
+    }, COOLDOWN_MS);
   }
 }
+
+onBeforeUnmount(() => clearTimeout(cooldown));
 </script>
 
 <template>

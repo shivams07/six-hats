@@ -15,16 +15,17 @@ async function submit() {
   if (props.locked || busy.value || !text.value.trim()) return;
   busy.value = true;
   const sent = text.value;
-  const ok = await run({ type: 'addPoint', text: sent, ...(props.speakers && saidBy.value ? { saidBy: saidBy.value } : {}) });
+  const sentSaidBy = saidBy.value;
+  const ok = await run({ type: 'addPoint', text: sent, ...(props.speakers && sentSaidBy ? { saidBy: sentSaidBy } : {}) });
   if (ok) {
     if (text.value === sent) text.value = '';
-    saidBy.value = '';
+    if (saidBy.value === sentSaidBy) saidBy.value = '';
   }
   busy.value = false;
 }
 
 function onEnter(e: KeyboardEvent) {
-  if (e.isComposing) return;
+  if (e.isComposing || e.keyCode === 229) return;
   e.preventDefault();
   submit();
 }
