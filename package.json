@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "concurrently -k -n server,web -c blue,green \"npm:dev:server\" \"npm:dev:web\"",
-    "dev:server": "TEAM_PASSCODE=${TEAM_PASSCODE:-dev} DATA_DIR=${DATA_DIR:-./data} tsx watch server/src/index.ts",
+    "dev:server": "PORT=${PORT:-8787} TEAM_PASSCODE=${TEAM_PASSCODE:-dev} DATA_DIR=${DATA_DIR:-./data} tsx watch server/src/index.ts",
     "dev:web": "vite",
     "build": "npm run build:server && npm run build:web",
     "build:server": "tsc -p server/tsconfig.json",
