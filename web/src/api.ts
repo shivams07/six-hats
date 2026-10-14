@@ -39,7 +39,7 @@ export const errorMessage = (e: unknown) => (e instanceof Error ? e.message : 'S
 
 interface RequestOptions {
   body?: unknown;
-  passcode?: boolean;
+  passcode?: boolean | string;
   token?: string;
   text?: boolean;
 }
@@ -47,7 +47,7 @@ interface RequestOptions {
 async function request<T>(method: string, path: string, opts: RequestOptions = {}): Promise<T> {
   const headers: Record<string, string> = {};
   if (opts.body !== undefined) headers['content-type'] = 'application/json';
-  if (opts.passcode) headers['x-team-passcode'] = getPasscode() ?? '';
+  if (opts.passcode) headers['x-team-passcode'] = typeof opts.passcode === 'string' ? opts.passcode : (getPasscode() ?? '');
   if (opts.token) headers['x-session-token'] = opts.token;
   let res: Response;
   try {
@@ -57,7 +57,7 @@ async function request<T>(method: string, path: string, opts: RequestOptions = {
   }
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { error?: string } | null;
-    if (res.status === 401 && opts.passcode) setPasscode(null);
+    if (res.status === 401 && opts.passcode === true) setPasscode(null);
     throw new ApiError(res.status, body?.error ?? `Request failed (${res.status})`);
   }
   if (res.status === 204) return undefined as T;
@@ -67,9 +67,9 @@ async function request<T>(method: string, path: string, opts: RequestOptions = {
 const enc = encodeURIComponent;
 
 export const api = {
-  checkPasscode(passcode: string): Promise<void> {
+  async checkPasscode(passcode: string): Promise<void> {
+    await request('POST', '/api/passcode/check', { passcode });
     setPasscode(passcode);
-    return request('POST', '/api/passcode/check', { passcode: true });
   },
   createSession: (input: CreateSessionInput) => request<CreateSessionResult>('POST', '/api/sessions', { body: input, passcode: true }),
   listSessions: () => request<SessionSummary[]>('GET', '/api/sessions', { passcode: true }),

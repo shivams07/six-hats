@@ -9,7 +9,7 @@ const code = ref('');
 
 function join() {
   const c = code.value.trim().toUpperCase();
-  if (c) void router.push(`/s/${c}`);
+  if (c) void router.push(`/s/${encodeURIComponent(c)}`);
 }
 </script>
 
