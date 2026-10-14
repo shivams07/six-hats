@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { ArrowRight } from 'lucide-vue-next';
 import { LIMITS } from '@shared/hats';
 import { SOCKET_ERRORS } from '@shared/protocol';
 import { api, ApiError, errorMessage, getToken, setToken } from '../api';
@@ -46,28 +47,34 @@ function onRejected(reason: string) {
 
 <template>
   <SessionBoard v-if="token" :key="token" :code="code" :token="token" @rejected="onRejected" />
-  <section v-else-if="notFound" class="card stack narrow">
-    <h1>Session not found</h1>
-    <p>No session has the code <strong>{{ code }}</strong>. Check it and try again.</p>
-    <div><RouterLink to="/" class="btn">Back home</RouterLink></div>
+  <section v-else-if="notFound" class="frame narrow notice">
+    <h1>No session with code <span class="code">{{ code }}</span></h1>
+    <p class="mute">Check the code with your facilitator. Codes are six letters and numbers.</p>
+    <div><RouterLink to="/" class="btn">Try another code</RouterLink></div>
   </section>
-  <section v-else-if="ended" class="card stack narrow">
-    <h1>This session has ended</h1>
-    <p class="muted">Its summary is in the archive.</p>
+  <section v-else-if="ended" class="frame narrow notice">
+    <h1>This session is closed</h1>
+    <p class="mute">Its decision and points are kept in the archive.</p>
     <div><RouterLink to="/archive" class="btn">Open the archive</RouterLink></div>
   </section>
-  <section v-else-if="admin" class="card stack narrow">
-    <h1>Admin link incomplete</h1>
-    <p class="muted">This link is missing its key. Open the session as facilitator from the archive.</p>
+  <section v-else-if="admin" class="frame narrow notice">
+    <h1>This admin link is incomplete</h1>
+    <p class="mute">It's missing its key. Open the session as facilitator from the archive instead.</p>
     <div><RouterLink to="/archive" class="btn">Open the archive</RouterLink></div>
   </section>
-  <form v-else class="card stack narrow" @submit.prevent="join">
-    <h1>Join session {{ code }}</h1>
+  <form v-else class="frame narrow notice" @submit.prevent="join">
+    <h1>Join <span class="code">{{ code }}</span></h1>
+    <p class="mute">No account needed. Your name is shown next to your points once they're revealed.</p>
     <label class="field">
       <span>Your name</span>
       <input v-model="name" :maxlength="LIMITS.name" autocomplete="name" required />
     </label>
     <p v-if="error" class="error" role="alert">{{ error }}</p>
-    <div><button class="btn btn-primary" :disabled="busy || !name.trim()">Join</button></div>
+    <div><button class="btn btn-primary" :disabled="busy || !name.trim()">Join session <ArrowRight aria-hidden="true" /></button></div>
   </form>
 </template>
+
+<style scoped>
+.notice { display: flex; flex-direction: column; gap: var(--s4); padding: var(--s6); }
+.code { font-stretch: 88%; letter-spacing: 0.14em; color: var(--violet); }
+</style>

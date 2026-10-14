@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>The Count</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F2F3F0;--sheet:#FBFBF9;--ink:#17161C;--violet:#5B2C83;--violet-wash:#ECE6F2;--rule:#D9DAE0;--mute:#6E6E78;--seal:#B9B9C3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1440px;height:900px;overflow:hidden;background:var(--paper);color:var(--ink);font:400 15px/1.45 Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;
+ background-image:linear-gradient(var(--rule) 1px,transparent 1px);background-size:100% 8px;background-color:var(--paper)}
+body{background-image:none}
+.top{height:64px;display:flex;align-items:center;gap:24px;padding:0 32px;border-bottom:1px solid var(--ink);background:var(--sheet)}
+.mark{font:800 20px/1 Archivo;font-stretch:112%;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.tally{display:inline-flex;gap:3px;position:relative;height:18px}
+.tally i{width:2px;height:18px;background:var(--ink)}
+.tally.five:after{content:"";position:absolute;left:-3px;right:-3px;top:8px;height:2px;background:var(--violet);transform:rotate(-24deg)}
+.sess{display:flex;align-items:baseline;gap:14px}
+.sess b{font:600 17px Archivo}
+.chip{font:600 12px Archivo;font-stretch:80%;letter-spacing:.14em;border:1px solid var(--ink);padding:3px 8px}
+.top .sp{flex:1}
+.status{font:600 12px Archivo;font-stretch:80%;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+.btn{font:600 14px Archivo;border:1px solid var(--ink);background:var(--sheet);padding:9px 16px;color:var(--ink)}
+.btn.primary{background:var(--violet);border-color:var(--violet);color:#fff}
+.flow{height:56px;display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--rule);background:var(--paper)}
+.slip{display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--rule);font-size:13px;color:var(--mute)}
+.slip .n{font:700 12px Archivo;font-stretch:75%;letter-spacing:.1em}
+.slip.done{color:var(--ink)}.slip.done .n{text-decoration:line-through;text-decoration-color:var(--violet)}
+.slip.now{background:var(--sheet);color:var(--ink);box-shadow:inset 0 -3px 0 var(--violet);font-weight:600}
+.sw{width:10px;height:10px;border:1px solid var(--ink)}
+main{display:grid;grid-template-columns:1fr 400px;height:780px}
+.left{padding:32px;display:flex;flex-direction:column;gap:24px;border-right:1px solid var(--ink)}
+.ballot{background:var(--sheet);border:1px solid var(--ink);display:grid;grid-template-columns:220px 1fr 300px}
+.hat{background:#17161C;color:#fff;padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+.hat .k{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.hat .nm{font:800 34px/1 Archivo;font-stretch:115%}
+.hat .f{font-size:14px;opacity:.85}
+.q{padding:24px 28px;border-right:1px solid var(--rule)}
+.q .k{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.q h1{font:600 34px/1.15 Archivo;font-stretch:96%;margin-top:10px;letter-spacing:-.01em}
+.q p{margin-top:12px;color:var(--mute);font-size:14px}
+.clock{padding:22px 26px;display:flex;flex-direction:column;justify-content:space-between}
+.clock .t{font:700 104px/0.9 Archivo;font-stretch:80%;letter-spacing:-.02em}
+.clock .k{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--violet)}
+.bar{height:4px;background:var(--rule)}.bar i{display:block;height:4px;width:34%;background:var(--violet)}
+.controls{display:flex;gap:8px;align-items:center}
+.controls .lbl{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-right:8px}
+.compose{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+.compose textarea{height:72px;border:1px solid var(--ink);background:var(--sheet);font:400 16px Archivo;padding:12px 14px;resize:none;color:var(--ink)}
+.sealed h2{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);display:flex;gap:10px;align-items:center}
+.sealed h2 span{color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.s{background:var(--sheet);border:1px solid var(--rule);border-left:4px solid var(--violet);padding:14px 16px;position:relative}
+.s .seal{position:absolute;top:10px;right:12px;font:700 11px Archivo;font-stretch:75%;letter-spacing:.16em;color:var(--violet)}
+.s p{font-size:16px;padding-right:70px}
+.s small{display:block;margin-top:8px;color:var(--mute);font-size:12px}
+aside{padding:28px;display:flex;flex-direction:column;gap:22px}
+aside h3{font:700 12px Archivo;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between}
+.reg{list-style:none;border-top:1px solid var(--ink)}
+.reg li{display:grid;grid-template-columns:10px 1fr auto 28px;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.dot{width:8px;height:8px;border-radius:50%;background:#2E7D4F}.dot.off{background:var(--seal)}
+.reg .tag{font:700 11px Archivo;font-stretch:75%;letter-spacing:.14em;border:1px solid var(--ink);padding:2px 6px;margin-left:8px}
+.reg .ct{font:700 18px Archivo;font-stretch:80%;text-align:right}
+.reg .tl{display:flex;gap:3px;justify-content:flex-end}.reg .tl i{width:2px;height:16px;background:var(--ink)}
+.reg .none{color:var(--mute)}
+.earlier .row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.badge{font:700 11px Archivo;font-stretch:80%;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--ink)}
+.note{font-size:13px;color:var(--mute)}
+</style></head><body>
+<header class="top">
+ <div class="mark"><span class="tally five"><i></i><i></i><i></i><i></i></span>Six Hats</div>
+ <div class="sess"><b>Q4 pricing change</b><span class="chip">K7M2QX</span></div>
+ <div class="sp"></div>
+ <span class="status">Counting open · Step 4 of 7</span>
+ <button class="btn">Copy invite link</button>
+</header>
+<nav class="flow">
+ <div class="slip done"><span class="n">01</span><span class="sw" style="background:#1967D2"></span>Blue</div>
+ <div class="slip done"><span class="n">02</span><span class="sw" style="background:#F8F9FA"></span>White</div>
+ <div class="slip done"><span class="n">03</span><span class="sw" style="background:#F9C513"></span>Yellow</div>
+ <div class="slip now"><span class="n">04</span><span class="sw" style="background:#17161C"></span>Black</div>
+ <div class="slip"><span class="n">05</span><span class="sw" style="background:#C5221F"></span>Red</div>
+ <div class="slip"><span class="n">06</span><span class="sw" style="background:#137333"></span>Green</div>
+ <div class="slip"><span class="n">07</span><span class="sw" style="background:#1967D2"></span>Blue</div>
+</nav>
+<main>
+ <section class="left">
+  <div class="ballot">
+   <div class="hat"><span class="k">Hat 4 · 4:00</span><div><div class="nm">⚠ Black</div><div class="f">Caution &amp; risks</div></div></div>
+   <div class="q"><span class="k">Focus · Should we move the Pro plan to annual billing only?</span>
+    <h1>What could go wrong if Pro goes annual-only?</h1>
+    <p>Write privately. Everyone's points are counted open together at 0:00.</p></div>
+   <div class="clock"><span class="k">Until the count</span><div class="t">2:41</div><div class="bar"><i></i></div></div>
+  </div>
+  <div class="controls"><span class="lbl">Facilitator</span><button class="btn">Pause</button><button class="btn">+1 min</button><button class="btn primary">Count now</button><button class="btn">Skip step</button></div>
+  <div class="compose"><textarea>Monthly SMB customers churn at renewal instead of upgrading</textarea><button class="btn primary">Seal point</button></div>
+  <div class="sealed"><h2>Your sealed points <span>2</span> · only you can see these until the count</h2>
+   <div class="grid">
+    <div class="s"><span class="seal">SEALED</span><p>Annual invoices exceed card limits for small teams in India.</p><small>Sealed 1:12 ago · Edit · Delete</small></div>
+    <div class="s"><span class="seal">SEALED</span><p>Sales loses the monthly trial-to-paid path we use in demos.</p><small>Sealed 0:38 ago · Edit · Delete</small></div>
+   </div></div>
+ </section>
+ <aside>
+  <div><h3><span>Register</span><span>5 present</span></h3>
+  <ul class="reg">
+   <li><span class="dot"></span><span>Priya<span class="tag">HOST</span></span><span class="tl"><i></i></span><span class="ct">1</span></li>
+   <li><span class="dot"></span><span>Asha</span><span class="tl"><i></i><i></i></span><span class="ct">2</span></li>
+   <li><span class="dot"></span><span>Meera</span><span class="tl"><i></i><i></i><i></i></span><span class="ct">3</span></li>
+   <li><span class="dot"></span><span>Dev</span><span class="tl"><i></i></span><span class="ct">1</span></li>
+   <li><span class="dot off"></span><span>Ravi</span><span class="tl none">—</span><span class="ct none">0</span></li>
+  </ul><p class="note" style="margin-top:8px">Sealed counts only. Nobody's words show until the count.</p></div>
+  <div class="earlier"><h3><span>Counted</span><span>3 steps</span></h3>
+   <div class="row"><span class="badge" style="background:#1967D2;color:#fff;border-color:#1967D2">Blue</span><span>Frame the decision</span><b>4</b></div>
+   <div class="row"><span class="badge">White</span><span>Facts we have</span><b>11</b></div>
+   <div class="row"><span class="badge" style="background:#F9C513;border-color:#E0A800">Yellow</span><span>Why it could work</span><b>8</b></div>
+  </div>
+ </aside>
+</main>
+</body></html>

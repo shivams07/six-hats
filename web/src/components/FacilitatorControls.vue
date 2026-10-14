@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { ArrowRight, Eye, Pause, Play, Plus, SkipForward } from 'lucide-vue-next';
 import type { Command, View } from '@shared/protocol';
 import { canWrite } from '@shared/rules';
 import { useCooldownGuard } from '../cooldown';
@@ -15,14 +16,20 @@ const act = (cmd: Command) => guarded(() => run(cmd));
 </script>
 
 <template>
-  <div class="row wrap" role="group" aria-label="Facilitator controls">
+  <div class="controls" role="group" aria-label="Facilitator controls">
     <template v-if="writable">
-      <button v-if="view.phase === 'writing'" class="btn" :disabled="pending" @click="act({ type: 'pause' })">Pause</button>
-      <button v-else class="btn" :disabled="pending" @click="act({ type: 'resume' })">Resume</button>
-      <button class="btn" :disabled="pending" @click="act({ type: 'addTime' })">+1 min</button>
-      <button class="btn btn-primary" :disabled="pending" @click="act({ type: 'revealNow' })">Reveal now</button>
-      <button class="btn btn-ghost" :disabled="pending" @click="act({ type: 'skipStep' })">Skip step</button>
+      <button v-if="view.phase === 'writing'" class="btn btn-sm" :disabled="pending" @click="act({ type: 'pause' })"><Pause aria-hidden="true" /> Pause</button>
+      <button v-else class="btn btn-sm" :disabled="pending" @click="act({ type: 'resume' })"><Play aria-hidden="true" /> Resume</button>
+      <button class="btn btn-sm" :disabled="pending" aria-label="Add one minute" @click="act({ type: 'addTime' })"><Plus aria-hidden="true" /> 1 min</button>
+      <button class="btn btn-sm btn-primary" :disabled="pending" @click="act({ type: 'revealNow' })"><Eye aria-hidden="true" /> Reveal now</button>
+      <button class="btn btn-sm btn-quiet" :disabled="pending" @click="act({ type: 'skipStep' })"><SkipForward aria-hidden="true" /> Skip hat</button>
     </template>
-    <button v-else class="btn btn-primary" :disabled="pending" @click="act({ type: 'nextStep' })">{{ isLast ? 'Go to voting' : 'Next step' }}</button>
+    <button v-else class="btn btn-sm btn-primary" :disabled="pending" @click="act({ type: 'nextStep' })">
+      {{ isLast ? 'Go to voting' : 'Next hat' }} <ArrowRight aria-hidden="true" />
+    </button>
   </div>
 </template>
+
+<style scoped>
+.controls { display: flex; flex-wrap: wrap; gap: var(--s2); }
+</style>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { provide, watch } from 'vue';
+import { RotateCw } from 'lucide-vue-next';
 import type { Command } from '@shared/protocol';
 import { RUN_KEY } from '../session-context';
 import { useSessionSocket } from '../socket';
 import { showToast } from '../toast';
 import DecisionPanel from './DecisionPanel.vue';
+import FlowStrip from './FlowStrip.vue';
 import LobbyPanel from './LobbyPanel.vue';
 import Roster from './Roster.vue';
 import SessionHeader from './SessionHeader.vue';
@@ -30,12 +32,18 @@ provide(RUN_KEY, run);
 </script>
 
 <template>
-  <div v-if="connection === 'reconnecting'" class="banner" role="status">Reconnecting…</div>
-  <p v-if="!view" class="muted">Connecting…</p>
-  <div v-else class="stack">
+  <div v-if="connection === 'reconnecting' && view" class="banner" role="status"><RotateCw aria-hidden="true" /> Reconnecting…</div>
+  <div v-if="!view" class="loading" aria-busy="true">
+    <p class="mute">{{ connection === 'reconnecting' ? 'Trying to reach the session…' : `Opening ${code}…` }}</p>
+    <div class="skeleton bar-a"></div>
+    <div class="skeleton bar-b"></div>
+    <div class="skeleton frame-a"></div>
+  </div>
+  <div v-else class="board">
     <SessionHeader :view="view" />
+    <FlowStrip :view="view" />
     <div class="board-grid">
-      <div class="board-main stack">
+      <div class="board-main">
         <LobbyPanel v-if="view.status === 'lobby'" :view="view" />
         <StepPanel v-else-if="view.status === 'running'" :view="view" :offset="clockOffset" />
         <VotingPanel v-else-if="view.status === 'voting'" :view="view" />
@@ -46,3 +54,19 @@ provide(RUN_KEY, run);
     </div>
   </div>
 </template>
+
+<style scoped>
+.board { display: flex; flex-direction: column; gap: var(--s5); }
+.board-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s6); align-items: start; }
+.board-main { display: flex; flex-direction: column; gap: var(--s5); min-width: 0; }
+.board-side { position: sticky; top: var(--s5); }
+.loading { display: flex; flex-direction: column; gap: var(--s4); }
+.skeleton { background: var(--hover); }
+.bar-a { height: 34px; width: 46%; }
+.bar-b { height: 48px; }
+.frame-a { height: 240px; border: 1px solid var(--rule); }
+@media (max-width: 1000px) {
+  .board-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s5); }
+  .board-side { position: static; }
+}
+</style>

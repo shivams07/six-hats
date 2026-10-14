@@ -1,0 +1,28 @@
+{
+  "buildPath": "comp",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-14T13:01:29.227Z",
+        "reason": "Claude: canon card deliberately reproduces the category-standard retro board (Inter is that standard's face); decision sketch, not shipping UI"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html",
+          ".impeccable/mocks/decision/challenger-transit.html"
+        ],
+        "createdAt": "2026-10-14T13:40:07.446Z",
+        "reason": "Claude: decision-page sketches of the rejected directions (Transit, Canon) deliberately use their own faces; not shipping UI, DESIGN.md describes the chosen world"
+      }
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { Copy, Download, RotateCw } from 'lucide-vue-next';
 import type { View } from '@shared/protocol';
 import { api, errorMessage } from '../api';
 import { copyText, downloadText } from '../files';
@@ -14,6 +15,7 @@ const all = computed(() => props.view.steps.map((_, i) => i));
 const markdown = ref<string | null>(null);
 const loading = ref(false);
 const loadError = ref('');
+const ranked = computed(() => topVoted(props.view));
 
 async function load() {
   loading.value = true;
@@ -32,7 +34,7 @@ onMounted(load);
 async function copy() {
   if (!markdown.value) return;
   const ok = await copyText(markdown.value);
-  showToast(ok ? 'Summary copied' : 'Could not copy; use Download instead', ok ? 'info' : 'error');
+  showToast(ok ? 'Summary copied as Markdown' : 'Could not copy. Download it instead.', ok ? 'info' : 'error');
 }
 
 function download() {
@@ -41,27 +43,45 @@ function download() {
 </script>
 
 <template>
-  <section class="card stack">
-    <div class="row between wrap">
-      <h2>Summary</h2>
-      <div class="row">
-        <button class="btn" :disabled="!markdown" @click="copy">Copy Markdown</button>
-        <button class="btn btn-primary" :disabled="!markdown" @click="download">Download .md</button>
+  <section class="result frame">
+    <div class="result-head">
+      <div class="title">
+        <h2>Result</h2>
+        <p class="mute small">Closed {{ new Date(view.closedAt ?? view.createdAt).toLocaleString() }} · {{ view.participants.length }} people</p>
+      </div>
+      <div class="row wrap">
+        <button class="btn btn-sm" :disabled="!markdown" @click="copy"><Copy aria-hidden="true" /> Copy Markdown</button>
+        <button class="btn btn-sm btn-primary" :disabled="!markdown" @click="download"><Download aria-hidden="true" /> Download .md</button>
       </div>
     </div>
-    <p v-if="loadError" class="error row wrap" role="alert">
-      <span>Could not load the Markdown: {{ loadError }}</span>
-      <button class="btn btn-small" :disabled="loading" @click="load">Retry</button>
+    <p v-if="loadError" class="load-error error" role="alert">
+      <span>Couldn't prepare the Markdown: {{ loadError }}</span>
+      <button class="btn btn-sm" :disabled="loading" @click="load"><RotateCw aria-hidden="true" /> Try again</button>
     </p>
-    <p class="muted small">Closed {{ new Date(view.closedAt ?? view.createdAt).toLocaleString() }}</p>
-    <h3>Decision</h3>
-    <p class="decision">{{ view.decision || 'No decision recorded.' }}</p>
-    <h3>Action items</h3>
-    <ActionList :actions="view.actions" />
-    <template v-if="view.votingClosed">
-      <h3>Top voted</h3>
-      <RankedList :points="topVoted(view)" :view="view" />
-    </template>
+    <div class="result-decision">
+      <h3>Decision</h3>
+      <p class="decision-text" :class="{ mute: !view.decision }">{{ view.decision || 'No decision was recorded.' }}</p>
+    </div>
+    <div class="result-actions">
+      <h3>Action items</h3>
+      <ActionList :actions="view.actions" />
+    </div>
+    <div v-if="view.votingClosed" class="result-top">
+      <h3 class="top-title">Top voted</h3>
+      <RankedList :points="ranked" :view="view" />
+    </div>
   </section>
-  <StepGroups :view="view" :indices="all" title="All points" open show-votes />
+  <StepGroups :view="view" :indices="all" title="Every point" show-votes />
 </template>
+
+<style scoped>
+.result { display: flex; flex-direction: column; }
+.result-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); flex-wrap: wrap; padding: var(--s5); border-bottom: 1px solid var(--ink); }
+.title { display: flex; flex-direction: column; gap: var(--s1); }
+.load-error { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; padding: var(--s3) var(--s5); background: var(--danger-wash); border-bottom: 1px solid var(--rule); }
+.result-decision, .result-actions { display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); }
+.result-actions { border-top: 1px solid var(--rule); }
+.decision-text { font-size: var(--t-xl); font-weight: 560; line-height: 1.35; white-space: pre-wrap; max-width: 60ch; }
+.result-top { border-top: 1px solid var(--rule); }
+.top-title { padding: var(--s5) var(--s5) var(--s3); border-bottom: 1px solid var(--ink); }
+</style>

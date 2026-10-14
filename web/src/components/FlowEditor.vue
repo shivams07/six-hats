@@ -41,11 +41,19 @@ function discard() {
 </script>
 
 <template>
-  <div class="stack">
+  <div class="editor">
     <FlowBuilder :model-value="draft" :start-number="startNumber" :min-steps="minSteps" :max-steps="maxSteps" @update:model-value="onEdit" />
-    <div v-if="editing" class="row">
-      <button class="btn btn-primary" :disabled="busy" @click="save">Save flow</button>
-      <button class="btn btn-ghost" @click="discard">Discard changes</button>
+    <div v-if="editing" class="unsaved" role="status">
+      <span class="small">Unsaved flow changes. Nobody sees them until you save.</span>
+      <span class="row">
+        <button class="btn btn-sm btn-quiet" @click="discard">Discard</button>
+        <button class="btn btn-sm btn-primary" :disabled="busy" @click="save">Save flow</button>
+      </span>
     </div>
   </div>
 </template>
+
+<style scoped>
+.editor { display: flex; flex-direction: column; gap: var(--s2); }
+.unsaved { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; padding: var(--s2) var(--s2) var(--s2) var(--s4); background: var(--violet-wash); border: 1px solid var(--violet-rule); }
+</style>

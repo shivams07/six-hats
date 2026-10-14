@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Lock } from 'lucide-vue-next';
 import { api, errorMessage, getPasscode } from '../api';
 
 const unlocked = ref(getPasscode() !== null);
@@ -23,9 +24,10 @@ async function submit() {
 
 <template>
   <slot v-if="unlocked" />
-  <form v-else class="card stack narrow" @submit.prevent="submit">
+  <form v-else class="frame narrow gate" @submit.prevent="submit">
+    <Lock class="gate-icon" :size="22" :stroke-width="1.75" aria-hidden="true" />
     <h1>Team passcode</h1>
-    <p class="muted">Creating sessions and opening the archive needs your team's passcode.</p>
+    <p class="mute">Starting sessions, templates and the archive are for your team. Enter the passcode to continue.</p>
     <label class="field">
       <span>Passcode</span>
       <input v-model="value" type="password" autocomplete="current-password" required />
@@ -34,3 +36,8 @@ async function submit() {
     <div><button class="btn btn-primary" :disabled="busy || !value">Continue</button></div>
   </form>
 </template>
+
+<style scoped>
+.gate { display: flex; flex-direction: column; gap: var(--s4); padding: var(--s6); }
+.gate-icon { color: var(--violet); }
+</style>

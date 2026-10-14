@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T13:38:54+00:00",
+  "title": "Design System: Six Hats",
+  "extensions": {
+    "colorMeta": {
+      "ballot-violet": {
+        "role": "primary",
+        "displayName": "Ballot Violet",
+        "canonical": "#5b2c83",
+        "oklch": "oklch(40.1% 0.142 305.8)",
+        "tonalRamp": [
+          "#2b2338",
+          "#4a2270",
+          "#5b2c83",
+          "#6a5488",
+          "#b9a2d4",
+          "#c4a8ec",
+          "#d6c2f4",
+          "#eee8f5"
+        ],
+        "dark": "#c4a8ec"
+      },
+      "ballot-violet-deep": {
+        "role": "primary",
+        "displayName": "Deep Violet",
+        "canonical": "#4a2270",
+        "oklch": "oklch(35.1% 0.130 304.0)",
+        "tonalRamp": [
+          "#2b2338",
+          "#4a2270",
+          "#5b2c83",
+          "#6a5488",
+          "#b9a2d4",
+          "#c4a8ec",
+          "#d6c2f4",
+          "#eee8f5"
+        ],
+        "dark": "#d6c2f4"
+      },
+      "violet-wash": {
+        "role": "primary",
+        "displayName": "Violet Wash",
+        "canonical": "#eee8f5",
+        "oklch": "oklch(93.9% 0.018 306.7)",
+        "tonalRamp": [
+          "#2b2338",
+          "#4a2270",
+          "#5b2c83",
+          "#6a5488",
+          "#b9a2d4",
+          "#c4a8ec",
+          "#d6c2f4",
+          "#eee8f5"
+        ],
+        "dark": "#2b2338"
+      },
+      "violet-rule": {
+        "role": "primary",
+        "displayName": "Violet Rule",
+        "canonical": "#b9a2d4",
+        "oklch": "oklch(74.9% 0.075 305.6)",
+        "tonalRamp": [
+          "#2b2338",
+          "#4a2270",
+          "#5b2c83",
+          "#6a5488",
+          "#b9a2d4",
+          "#c4a8ec",
+          "#d6c2f4",
+          "#eee8f5"
+        ],
+        "dark": "#6a5488"
+      },
+      "on-violet": {
+        "role": "primary",
+        "displayName": "On Violet",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#17161c"
+      },
+      "print-ink": {
+        "role": "neutral",
+        "displayName": "Print Ink",
+        "canonical": "#17161c",
+        "oklch": "oklch(20.4% 0.012 293.0)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#f2f1f5"
+      },
+      "ballot-paper": {
+        "role": "neutral",
+        "displayName": "Ballot Paper",
+        "canonical": "#f1f2f5",
+        "oklch": "oklch(96.1% 0.004 271.4)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#121117"
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Sheet",
+        "canonical": "#fbfbfd",
+        "oklch": "oklch(98.9% 0.003 286.4)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#1c1b22"
+      },
+      "hover-grey": {
+        "role": "neutral",
+        "displayName": "Hover Grey",
+        "canonical": "#e7e8ec",
+        "oklch": "oklch(93.1% 0.005 275.0)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#25242d"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#d7d8dd",
+        "oklch": "oklch(88.3% 0.007 277.2)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#34333d"
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Rule Strong",
+        "canonical": "#b7b8c1",
+        "oklch": "oklch(78.5% 0.013 281.0)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#4a4954"
+      },
+      "disabled-rule": {
+        "role": "neutral",
+        "displayName": "Disabled Rule",
+        "canonical": "#8a8b95",
+        "oklch": "oklch(63.9% 0.015 281.4)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#74737f"
+      },
+      "mute": {
+        "role": "neutral",
+        "displayName": "Mute",
+        "canonical": "#63646e",
+        "oklch": "oklch(50.6% 0.016 281.3)",
+        "tonalRamp": [
+          "#17161c",
+          "#26262d",
+          "#3f4049",
+          "#63646e",
+          "#8a8b95",
+          "#b7b8c1",
+          "#e7e8ec",
+          "#fbfbfd"
+        ],
+        "dark": "#a6a5b1"
+      },
+      "live-green": {
+        "role": "status",
+        "displayName": "Live Green",
+        "canonical": "#1e6b45",
+        "oklch": "oklch(47.1% 0.097 157.4)",
+        "tonalRamp": [
+          "#001103",
+          "#002f17",
+          "#0a4f30",
+          "#29714c",
+          "#589170",
+          "#84b196",
+          "#b1d3bd",
+          "#def5e6"
+        ],
+        "dark": "#7bd3a3"
+      },
+      "warn-amber": {
+        "role": "status",
+        "displayName": "Warn Amber",
+        "canonical": "#8a5300",
+        "oklch": "oklch(49.4% 0.109 66.9)",
+        "tonalRamp": [
+          "#1a0500",
+          "#3c1c00",
+          "#613600",
+          "#8a5300",
+          "#a77742",
+          "#c59c73",
+          "#e3c3a2",
+          "#ffead3"
+        ],
+        "dark": "#e8bb72"
+      },
+      "danger": {
+        "role": "status",
+        "displayName": "Danger",
+        "canonical": "#a3262c",
+        "oklch": "oklch(47.4% 0.161 23.6)",
+        "tonalRamp": [
+          "#260000",
+          "#4f0006",
+          "#7c111a",
+          "#a83033",
+          "#c45f5c",
+          "#df8a85",
+          "#f9b5b1",
+          "#ffe1dd"
+        ],
+        "dark": "#f2a3a6"
+      },
+      "danger-wash": {
+        "role": "status",
+        "displayName": "Danger Wash",
+        "canonical": "#f8e9e9",
+        "oklch": "oklch(94.6% 0.016 17.4)",
+        "tonalRamp": [
+          "#0c0b0b",
+          "#262525",
+          "#444141",
+          "#656060",
+          "#878080",
+          "#aca2a2",
+          "#d2c6c6",
+          "#f9eaea"
+        ],
+        "dark": "#3a2024"
+      },
+      "hat-white": {
+        "role": "hat",
+        "displayName": "White Hat",
+        "canonical": "#f7f7f5",
+        "oklch": "oklch(97.6% 0.003 106.4)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828281",
+          "#a5a5a4",
+          "#c9c9c8",
+          "#eeeeed"
+        ],
+        "dark": "#f2f1f5"
+      },
+      "hat-red": {
+        "role": "hat",
+        "displayName": "Red Hat",
+        "canonical": "#b3261e",
+        "oklch": "oklch(50.1% 0.178 28.7)",
+        "tonalRamp": [
+          "#260000",
+          "#500000",
+          "#7e0a08",
+          "#af241d",
+          "#cd584b",
+          "#e88678",
+          "#ffb2a6",
+          "#ffdfd5"
+        ]
+      },
+      "hat-black": {
+        "role": "hat",
+        "displayName": "Black Hat",
+        "canonical": "#17161c",
+        "oklch": "oklch(20.4% 0.012 293.0)",
+        "tonalRamp": [
+          "#0b0a0f",
+          "#25242a",
+          "#424146",
+          "#616065",
+          "#828285",
+          "#a5a5a7",
+          "#c9c9ca",
+          "#eeeeef"
+        ],
+        "dark": "#050507"
+      },
+      "hat-yellow": {
+        "role": "hat",
+        "displayName": "Yellow Hat",
+        "canonical": "#f2c230",
+        "oklch": "oklch(83.4% 0.158 89.0)",
+        "tonalRamp": [
+          "#0f0b02",
+          "#2b2412",
+          "#4e401b",
+          "#745e22",
+          "#9c7e28",
+          "#c7a02d",
+          "#f2c332",
+          "#ffea80"
+        ]
+      },
+      "hat-green": {
+        "role": "hat",
+        "displayName": "Green Hat",
+        "canonical": "#1e6b3a",
+        "oklch": "oklch(46.9% 0.108 151.5)",
+        "tonalRamp": [
+          "#001101",
+          "#002f10",
+          "#0a5027",
+          "#2a7242",
+          "#599168",
+          "#85b28f",
+          "#b1d3b8",
+          "#def6e3"
+        ]
+      },
+      "hat-blue": {
+        "role": "hat",
+        "displayName": "Blue Hat",
+        "canonical": "#1f5fbf",
+        "oklch": "oklch(50.2% 0.164 259.0)",
+        "tonalRamp": [
+          "#00062d",
+          "#002059",
+          "#093d88",
+          "#1d5dbb",
+          "#4c81d5",
+          "#79a6ec",
+          "#a7cbff",
+          "#d6f0ff"
+        ]
+      }
+    },
+    "themes": {
+      "dark": {
+        "source": "web/src/styles.css @media (prefers-color-scheme: dark)",
+        "neutralRamp": {
+          "n0": "#1c1b22",
+          "n1": "#121117",
+          "n2": "#25242d",
+          "n3": "#34333d",
+          "n4": "#4a4954",
+          "n5": "#74737f",
+          "n6": "#a6a5b1",
+          "n7": "#c9c8d1",
+          "n8": "#e2e1e8",
+          "n9": "#f2f1f5"
+        },
+        "note": "Same semantic aliases (paper=n1, sheet=n0, ink=n9, rule=n3, rule-strong=n4, mute=n6, hover=n2) re-pointed at the night ramp; violet lifts and on-violet becomes ink."
+      }
+    },
+    "lightNeutralRamp": {
+      "n0": "#fbfbfd",
+      "n1": "#f1f2f5",
+      "n2": "#e7e8ec",
+      "n3": "#d7d8dd",
+      "n4": "#b7b8c1",
+      "n5": "#8a8b95",
+      "n6": "#63646e",
+      "n7": "#3f4049",
+      "n8": "#26262d",
+      "n9": "#17161c"
+    },
+    "typographyMeta": {
+      "clock": {
+        "displayName": "Clock",
+        "purpose": "Countdown numerals only; 4rem below 720px."
+      },
+      "prompt": {
+        "displayName": "Prompt",
+        "purpose": "The open hat's question in the ballot frame; 1.4375rem on phones."
+      },
+      "hat-name": {
+        "displayName": "Hat name",
+        "purpose": "Hat name inside the open hat's coloured panel."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page and session titles (h1); 1.4375rem below 720px."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section heads (h2)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Slip text and inputs."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Captions, credits, hints, flow-strip cells, small buttons."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Default button label."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Condensed tracked caps for field labels, legends, column heads, chips and the Sealed stamp."
+      },
+      "tally-numeral": {
+        "displayName": "Tally numeral",
+        "purpose": "The numeral beside every tally."
+      }
+    },
+    "typeScale": {
+      "t-xs": "0.75rem",
+      "t-sm": "0.875rem",
+      "t-md": "1rem",
+      "t-lg": "1.1875rem",
+      "t-xl": "1.4375rem",
+      "t-2xl": "1.75rem",
+      "t-3xl": "2.125rem",
+      "t-clock": "6rem"
+    },
+    "fontSource": {
+      "family": "Archivo Variable",
+      "package": "@fontsource-variable/archivo (standard.css)",
+      "axes": {
+        "wght": "100 900",
+        "wdth": "62% 125%"
+      }
+    },
+    "iconSource": "lucide-vue-next (stroke 1.75 for hat icons; 16-18px in buttons)",
+    "shadows": [
+      {
+        "name": "toast-lift",
+        "value": "0 8px 24px rgb(0 0 0 / 0.18)",
+        "purpose": "Toasts only; no surface casts a shadow."
+      }
+    ],
+    "focus": [
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--violet); outline-offset: 2px",
+        "purpose": "Global keyboard focus."
+      },
+      {
+        "name": "field-focus",
+        "value": "border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet)",
+        "purpose": "Inputs, textareas, selects."
+      },
+      {
+        "name": "composer-focus",
+        "value": "box-shadow: inset 0 0 0 2px var(--violet)",
+        "purpose": "Composer textarea inside its ink frame."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Every entering or revealing transition."
+      },
+      {
+        "name": "state-change",
+        "value": "150ms",
+        "purpose": "Hover/fill/border changes on buttons, fields, nav."
+      },
+      {
+        "name": "seal-break",
+        "value": "clip-path inset(0 0 0 100%) + fade + 6px shift, 280ms ease-out",
+        "purpose": "Your Sealed stamp breaks away at reveal."
+      },
+      {
+        "name": "credit-in",
+        "value": "opacity 220ms ease-out, 120ms delay",
+        "purpose": "Author credit appears after the seal breaks."
+      },
+      {
+        "name": "slip-cascade",
+        "value": "opacity/translateY(6px) 220ms + clip-path from top 280ms; delay min(i,15) x 40ms",
+        "purpose": "Revealed slips land in a short cascade."
+      },
+      {
+        "name": "ink-mark",
+        "value": "stroke-dashoffset 26 -> 0, 240ms ease-out",
+        "purpose": "Violet cross strokes in when a vote is cast."
+      },
+      {
+        "name": "clock-rule",
+        "value": "transform 250ms linear",
+        "purpose": "Countdown time rule shrinks with the clock."
+      },
+      {
+        "name": "toast-in",
+        "value": "translateY(8px) + fade, 200ms ease-out",
+        "purpose": "Toast entry."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all animation and transition durations 0.001ms",
+        "purpose": "End state shown instantly."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone-xs",
+        "value": "350px",
+        "purpose": "Wordmark text hides."
+      },
+      {
+        "name": "phone",
+        "value": "560px"
+      },
+      {
+        "name": "tablet",
+        "value": "720px",
+        "purpose": "Ballot stacks; app bar and page padding tighten; clock 4rem."
+      },
+      {
+        "name": "board-stack",
+        "value": "1000px",
+        "purpose": "Register drops below the main column."
+      },
+      {
+        "name": "ballot-wrap",
+        "value": "1100px",
+        "purpose": "Clock wraps under the prompt."
+      },
+      {
+        "name": "page",
+        "value": "1280px",
+        "purpose": "Max content width."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Violet-filled action for the one thing that commits: Seal point, Reveal now, Join, Close voting and count.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 22h14\"/><path d=\"M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z\"/><path d=\"M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.66 0-3 1-3 3s1 2 1 3.5V13\"/></svg> Seal point</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--ink, #17161c); border-radius: 0; background: var(--sheet, #fbfbfd); color: var(--ink, #17161c); font: 620 0.9375rem/1 'Archivo Variable', 'Archivo', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms, border-color 150ms, color 150ms; } .ds-btn:hover { background: var(--hover, #e7e8ec); } .ds-btn:active { background: var(--n3, #d7d8dd); } .ds-btn:focus-visible { outline: 2px solid var(--violet, #5b2c83); outline-offset: 2px; } .ds-btn:disabled { cursor: not-allowed; background: transparent; color: var(--mute, #63646e); border: 1px dashed var(--n5, #8a8b95); } .ds-btn-primary { background: var(--violet, #5b2c83); border-color: var(--violet, #5b2c83); color: var(--on-violet, #ffffff); } .ds-btn-primary:hover, .ds-btn-primary:active { background: var(--violet-strong, #4a2270); border-color: var(--violet-strong, #4a2270); }"
+    },
+    {
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Default hairline button; fills grey on hover, dashed when disabled.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-btn\">Pause</button><button class=\"ds-btn\" disabled>Seal point</button></div>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--ink, #17161c); border-radius: 0; background: var(--sheet, #fbfbfd); color: var(--ink, #17161c); font: 620 0.9375rem/1 'Archivo Variable', 'Archivo', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms, border-color 150ms, color 150ms; } .ds-btn:hover { background: var(--hover, #e7e8ec); } .ds-btn:active { background: var(--n3, #d7d8dd); } .ds-btn:focus-visible { outline: 2px solid var(--violet, #5b2c83); outline-offset: 2px; } .ds-btn:disabled { cursor: not-allowed; background: transparent; color: var(--mute, #63646e); border: 1px dashed var(--n5, #8a8b95); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action inside the delete-confirm strip.",
+      "html": "<button class=\"ds-btn ds-btn-danger\">Delete</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--ink, #17161c); border-radius: 0; background: var(--sheet, #fbfbfd); color: var(--ink, #17161c); font: 620 0.9375rem/1 'Archivo Variable', 'Archivo', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms, border-color 150ms, color 150ms; } .ds-btn:hover { background: var(--hover, #e7e8ec); } .ds-btn:active { background: var(--n3, #d7d8dd); } .ds-btn:focus-visible { outline: 2px solid var(--violet, #5b2c83); outline-offset: 2px; } .ds-btn:disabled { cursor: not-allowed; background: transparent; color: var(--mute, #63646e); border: 1px dashed var(--n5, #8a8b95); } .ds-btn-danger { border-color: var(--danger, #a3262c); color: var(--danger, #a3262c); } .ds-btn-danger:hover { background: var(--danger-wash, #f8e9e9); }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Square sheet input with a condensed-caps label; violet border and ring on focus.",
+      "html": "<label class=\"ds-field\"><span>Session code</span><input class=\"ds-input\" placeholder=\"K7M2QX\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif; } .ds-field > span { font-size: 0.75rem; font-weight: 650; font-stretch: 82%; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute, #63646e); } .ds-input { font: 400 1rem/1.5 'Archivo Variable', 'Archivo', system-ui, sans-serif; color: var(--ink, #17161c); background: var(--sheet, #fbfbfd); border: 1px solid var(--rule-strong, #b7b8c1); border-radius: 0; padding: 9px 12px; transition: border-color 150ms, box-shadow 150ms; } .ds-input:hover { border-color: var(--n6, #63646e); } .ds-input:focus-visible { outline: none; border-color: var(--violet, #5b2c83); box-shadow: 0 0 0 1px var(--violet, #5b2c83); }"
+    },
+    {
+      "name": "Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Square condensed-caps tags: Host, Code (ink border), Scribe (violet).",
+      "html": "<div style=\"display:flex;gap:8px\"><span class=\"ds-chip\">Host</span><span class=\"ds-chip ds-chip-ink\">Code <b>25XJ8F</b></span><span class=\"ds-chip ds-chip-violet\">Scribe</span></div>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--rule-strong, #b7b8c1); background: var(--sheet, #fbfbfd); color: var(--ink, #17161c); font: 650 0.75rem/1.3 'Archivo Variable', 'Archivo', system-ui, sans-serif; font-stretch: 85%; letter-spacing: 0.08em; text-transform: uppercase; } .ds-chip b { font-weight: 760; letter-spacing: 0.14em; } .ds-chip-ink { border-color: var(--ink, #17161c); } .ds-chip-violet { border-color: var(--violet, #5b2c83); color: var(--violet, #5b2c83); }"
+    },
+    {
+      "name": "App bar",
+      "kind": "nav",
+      "refersTo": "appbar",
+      "description": "Sheet strip with ink foot line, tally wordmark, and violet underline on the active route.",
+      "html": "<header class=\"ds-appbar\"><a class=\"ds-wordmark\" href=\"#\"><svg width=\"22\" height=\"18\" viewBox=\"0 0 22 18\" aria-hidden=\"true\"><g fill=\"currentColor\"><rect x=\"2\" y=\"1\" width=\"2\" height=\"16\"/><rect x=\"7\" y=\"1\" width=\"2\" height=\"16\"/><rect x=\"12\" y=\"1\" width=\"2\" height=\"16\"/><rect x=\"17\" y=\"1\" width=\"2\" height=\"16\"/></g><rect x=\"-1\" y=\"8\" width=\"24\" height=\"2\" fill=\"#5b2c83\" transform=\"rotate(-28 11 9)\"/></svg>Six Hats</a><nav class=\"ds-nav\"><a href=\"#\" class=\"on\">Join</a><a href=\"#\">New session</a><a href=\"#\">Archive</a></nav></header>",
+      "css": ".ds-appbar { display: flex; align-items: center; gap: 24px; height: 56px; padding: 0 32px; background: var(--sheet, #fbfbfd); border-bottom: 1px solid var(--ink, #17161c); font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif; } .ds-wordmark { display: inline-flex; align-items: center; gap: 12px; font-size: 1.1875rem; font-weight: 820; font-stretch: 112%; letter-spacing: -0.01em; color: var(--ink, #17161c); text-decoration: none; } .ds-nav { margin-left: auto; display: flex; gap: 4px; } .ds-nav a { display: inline-flex; align-items: center; height: 56px; padding: 0 12px; font-size: 0.875rem; font-weight: 600; color: var(--mute, #63646e); text-decoration: none; box-shadow: inset 0 -2px 0 transparent; transition: color 150ms, box-shadow 150ms; } .ds-nav a:hover { color: var(--ink, #17161c); } .ds-nav a.on { color: var(--ink, #17161c); box-shadow: inset 0 -2px 0 var(--violet, #5b2c83); } .ds-nav a:focus-visible { outline: 2px solid var(--violet, #5b2c83); outline-offset: 2px; }"
+    },
+    {
+      "name": "Tally",
+      "kind": "custom",
+      "refersTo": "tally-numeral",
+      "description": "Every count: four ink strokes per group, a violet strike for the fifth, tabular numeral beside.",
+      "html": "<span class=\"ds-tally\"><span class=\"ds-marks\"><span class=\"ds-group full\"><i></i><i></i><i></i><i></i></span><span class=\"ds-group\"><i></i><i></i><i></i></span></span><span class=\"ds-n\">8</span></span>",
+      "css": ".ds-tally { display: inline-flex; align-items: center; gap: 6px; font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif; color: var(--ink, #17161c); } .ds-marks { display: inline-flex; gap: 5px; } .ds-group { position: relative; display: inline-flex; gap: 3px; height: 16px; } .ds-group i { display: block; width: 2px; height: 16px; background: var(--ink, #17161c); } .ds-group.full::after { content: ''; position: absolute; left: -3px; right: -3px; top: 7px; height: 2px; background: var(--violet, #5b2c83); transform: rotate(-28deg); } .ds-n { font-weight: 720; font-stretch: 82%; font-size: 1.1875rem; font-variant-numeric: tabular-nums; min-width: 2ch; text-align: right; }"
+    },
+    {
+      "name": "Slips",
+      "kind": "card",
+      "refersTo": "slip",
+      "description": "A point as a square slip: sealed (violet rule, rotated Sealed stamp), open with credit, or voted (violet wash).",
+      "html": "<div class=\"ds-slips\"><div class=\"ds-slip sealed\"><p>Annual invoices exceed card limits for small teams in India.</p><div class=\"ds-foot\"><span class=\"ds-seal\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/></svg> Sealed</span></div></div><div class=\"ds-slip\"><p>Refund requests spike in month two.</p><div class=\"ds-foot\"><span class=\"ds-by\">Asha</span></div></div><div class=\"ds-slip voted\"><p>62% of Pro accounts already pay annually</p><div class=\"ds-foot\"><span class=\"ds-by\">Asha</span></div></div></div>",
+      "css": ".ds-slips { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 8px; font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif; } .ds-slip { display: flex; flex-direction: column; gap: 12px; padding: 12px 16px; background: var(--sheet, #fbfbfd); color: var(--ink, #17161c); border: 1px solid var(--rule, #d7d8dd); transition: border-color 280ms cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms; } .ds-slip p { margin: 0; font-size: 1rem; line-height: 1.5; } .ds-slip.sealed { border-color: var(--violet-rule, #b9a2d4); } .ds-slip.voted { border-color: var(--violet, #5b2c83); background: var(--violet-wash, #eee8f5); } .ds-foot { display: flex; align-items: center; gap: 12px; margin-top: auto; min-height: 32px; } .ds-by { font-size: 0.875rem; font-weight: 600; color: var(--mute, #63646e); } .ds-seal { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border: 1.5px solid var(--violet, #5b2c83); color: var(--violet, #5b2c83); font-size: 0.75rem; font-weight: 760; font-stretch: 82%; letter-spacing: 0.12em; text-transform: uppercase; transform: rotate(-2deg); }"
+    },
+    {
+      "name": "Ballot frame",
+      "kind": "custom",
+      "refersTo": "hat-name",
+      "description": "The open hat: coloured hat panel, prompt, and condensed countdown over a violet time rule, in a 1px ink frame.",
+      "html": "<section class=\"ds-ballot\"><div class=\"ds-hat\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/></svg><p class=\"ds-hatname\">Black hat</p><p class=\"ds-focus\">Caution &amp; risks</p><p class=\"ds-meta\">Hat 4 of 7 · 30:00</p></div><div class=\"ds-prompt\"><h2>What could go wrong if Pro goes annual-only?</h2><p>Write privately. Your points stay sealed until the clock runs out.</p></div><div class=\"ds-clock\"><span class=\"ds-clock-n\">28:10</span><span class=\"ds-cap\">until the reveal</span><span class=\"ds-rule\"><i></i></span></div></section>",
+      "css": ".ds-ballot { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto; background: var(--sheet, #fbfbfd); border: 1px solid var(--ink, #17161c); color: var(--ink, #17161c); font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif; } .ds-hat { display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--hat-black, #17161c); color: var(--hat-black-ink, #ffffff); border-right: 1px solid var(--ink, #17161c); } .ds-hat p { margin: 0; } .ds-hatname { font-size: 1.75rem; font-weight: 820; font-stretch: 108%; line-height: 1.05; letter-spacing: -0.01em; } .ds-focus { font-size: 0.875rem; font-weight: 560; opacity: 0.9; } .ds-meta { margin-top: auto !important; font-size: 0.75rem; font-weight: 650; font-stretch: 85%; letter-spacing: 0.06em; opacity: 0.85; } .ds-prompt { display: flex; flex-direction: column; gap: 12px; padding: 24px 32px; } .ds-prompt h2 { margin: 0; font-size: 2.125rem; font-weight: 640; font-stretch: 96%; line-height: 1.15; letter-spacing: -0.012em; max-width: 26ch; } .ds-prompt p { margin: 0; color: var(--mute, #63646e); } .ds-clock { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding: 24px 32px 24px 16px; min-width: 200px; } .ds-clock-n { font-size: 6rem; font-weight: 720; font-stretch: 78%; line-height: 0.9; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; } .ds-cap { font-size: 0.875rem; font-weight: 600; color: var(--mute, #63646e); } .ds-rule { display: block; width: 100%; height: 4px; margin-top: 8px; background: var(--rule, #d7d8dd); } .ds-rule i { display: block; height: 100%; background: var(--violet, #5b2c83); transform: scaleX(0.94); transform-origin: left center; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Count",
+    "overview": "**Creative North Star: \"The Count\"**\n\nEvery hat runs as a secret ballot. People mark in private, their slips stay sealed, and the room counts them open together when the clock reaches zero. The interface is ballot paper and print ink: a cool, slightly blue-grey paper ground with near-white sheets laid on it, black type and black hairlines for structure, and a single indelible violet that means *yours, live, cast*. Nothing is soft or rounded. Every count is drawn as a tally (four strokes and a violet fifth struck across) with a tabular numeral beside it.\n\nDensity is operational: a board that stays readable when screen-shared to a room, with one dominant object per state (the ballot frame while writing, the vote sheet while voting, the decision sheet at the end) and a quiet register of people at the side. Hat colour is a material, not a theme. It appears only where a hat is named, so the rest of the page stays paper and ink whichever hat is open.\n\nThe dark theme is the counting room at night: an ink ground, paper-coloured type, and a lifted violet. It is a full re-mapping of the same nine-step neutral ramp, not an inversion filter.",
+    "keyCharacteristics": [
+      "Cool ballot-paper ground with near-white sheets; black print ink for type and structural lines.",
+      "One accent, violet, reserved for what is yours, live or cast.",
+      "Archivo Variable throughout, using its width axis: condensed for numerals and labels, extended for the wordmark and hat names.",
+      "Every numeral is tabular; every count is a tally.",
+      "Square corners, 1px hairlines, no shadows on surfaces.",
+      "States read as printed marks: hairline at rest, filled when chosen, dashed when disabled, violet ring on focus."
+    ],
+    "rules": [
+      {
+        "name": "The One Ink Rule",
+        "body": "Violet means yours, live or cast. If an element is none of those, it is not violet.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hat Containment Rule",
+        "body": "Hat colours appear only on hat badges, the open hat's panel inside the ballot frame, and flow swatches. A hat is always shown with its name and icon, never by colour alone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ballot Paper Rule",
+        "body": "The ground is cool paper and the sheets are near-white. Never warm the ramp toward cream.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Count Rule",
+        "body": "Tabular numerals are set on the root; every numeral in the product (clock, code, counts, timers, dates) aligns in columns.",
+        "section": "typography"
+      },
+      {
+        "name": "The Form Caps Rule",
+        "body": "Condensed tracked capitals label a field, a column, a chip or a stamp. They never sit above a heading as a decorative tag.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sheet on Paper Rule",
+        "body": "Content lives on sheets laid on the paper ground. Panel footers and toolbars step back down to paper so the sheet reads as the writing surface.",
+        "section": "layout"
+      },
+      {
+        "name": "The Two Lines Rule",
+        "body": "Ink lines mark the structure of the thing you are using; grey rules separate items within it. Never thicken a line to create emphasis. Use ink instead.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square Corner Rule",
+        "body": "If it holds content or takes input, it has square corners. Only a presence or status dot is round.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** draw every count as a tally with its tabular numeral, and every cast vote as a violet ink mark.",
+      "**Do** keep violet for what is yours, live or cast: primary action, focus, current step, the clock rule, the count strike, the vote.",
+      "**Do** use ink 1px lines for the structure of the active object and grey rules between its items.",
+      "**Do** show disabled controls with a dashed border and mute text, chosen ones filled, and focus with the violet ring.",
+      "**Do** label fields, columns, chips and stamps in condensed tracked caps at 12px.",
+      "**Do** pair every hat colour with the hat's name and its Lucide icon.",
+      "**Do** map dark theme through the same nine-step ramp: ink ground (#121117), sheets one step up (#1c1b22), paper-coloured type (#f2f1f5), lifted violet.",
+      "**Do** let reduced motion show the counted end state instantly; the global reduced-motion rule already collapses every transition."
+    ],
+    "donts": [
+      "**Don't** build the sticky-note retro board: coloured cards in columns, avatar stacks, soft-shadowed rounded tiles.",
+      "**Don't** use hat colours for cards, columns, page backgrounds or anything that is not a hat badge, the open hat's panel or a swatch.",
+      "**Don't** round a corner. Only presence and status dots are circles.",
+      "**Don't** add shadows to surfaces; toasts are the only floating layer.",
+      "**Don't** use dashed borders for anything but disabled controls (a sealed slip is a solid violet-rule border plus its stamp).",
+      "**Don't** put condensed caps above a headline as a decorative tag.",
+      "**Don't** introduce a second accent or a warm cream ground."
+    ]
+  }
+}

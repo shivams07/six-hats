@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Night Line</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--enamel:#0B1230;--enamel2:#111A40;--porcelain:#FFFFFF;--dim:#8E97B8;--rule:#26305A;--scarlet:#E21D2D;--cobalt:#1E5BFF;--amber:#FFC20E;--green:#22B14C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1440px;height:900px;overflow:hidden;background:var(--enamel);color:var(--porcelain);font:400 15px/1.45 Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.cond{font-family:"Barlow Semi Condensed",sans-serif}
+.top{height:60px;display:flex;align-items:center;gap:22px;padding:0 32px;border-bottom:1px solid var(--rule)}
+.logo{font:700 22px "Barlow Semi Condensed";letter-spacing:.04em;text-transform:uppercase}
+.code{font:600 13px "Barlow Semi Condensed";letter-spacing:.16em;border:1px solid var(--porcelain);padding:4px 10px}
+.sp{flex:1}
+.btn{font:600 14px "Barlow Semi Condensed";letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--porcelain);background:transparent;color:var(--porcelain);padding:9px 16px}
+.btn.red{background:var(--scarlet);border-color:var(--scarlet)}
+.line{height:150px;position:relative;padding:0 64px;border-bottom:1px solid var(--rule)}
+.track{position:absolute;left:64px;right:64px;top:62px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--cobalt) 0 14%,#DDE2F2 14% 28%,var(--amber) 28% 43%,#5A6385 43% 100%)}
+.track:after{content:"";position:absolute;left:43%;width:7%;height:8px;background:var(--porcelain);box-shadow:0 0 18px 4px rgba(255,255,255,.45)}
+.st{position:absolute;top:50px;width:32px;height:32px;border-radius:50%;background:var(--enamel);border:5px solid var(--porcelain);transform:translateX(-50%)}
+.st.past{border-color:#C9CFE6}.st.next{border-color:#5A6385}
+.st.now{width:44px;height:44px;top:44px;border-width:7px;box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+.lab{position:absolute;top:96px;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.lab b{display:block;font:600 15px "Barlow Semi Condensed";letter-spacing:.08em;text-transform:uppercase}
+.lab small{color:var(--dim);font-size:12px}
+.lab.now b{font-size:18px}
+.term{position:absolute;right:32px;top:18px;font:600 12px "Barlow Semi Condensed";letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+main{display:grid;grid-template-columns:1fr 420px;height:690px}
+.left{padding:32px 40px;display:flex;flex-direction:column;gap:22px}
+.head{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+.k{font:600 13px "Barlow Semi Condensed";letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.hatname{display:flex;align-items:center;gap:12px;margin-top:6px}
+.hatname .pill{font:700 14px "Barlow Semi Condensed";letter-spacing:.12em;text-transform:uppercase;background:#000;border:2px solid var(--porcelain);padding:4px 12px}
+h1{font:500 38px/1.15 Barlow;margin-top:14px;max-width:780px}
+.clock{text-align:right}
+.clock .t{font:700 112px/0.9 "Barlow Semi Condensed";letter-spacing:-.01em}
+.ctrl{display:flex;gap:10px}
+.compose{display:grid;grid-template-columns:1fr auto;gap:12px}
+.compose textarea{height:70px;background:var(--enamel2);border:1.5px solid var(--porcelain);color:var(--porcelain);font:400 16px Barlow;padding:12px 14px;resize:none}
+.pts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.p{background:var(--enamel2);border:1px solid var(--rule);border-left:6px solid var(--porcelain);padding:14px 16px}
+.p p{font-size:16px}.p small{display:block;margin-top:8px;color:var(--dim)}
+aside{border-left:1px solid var(--rule);padding:28px}
+.board{border:1.5px solid var(--porcelain)}
+.board .hd{display:grid;grid-template-columns:1fr 70px;padding:10px 14px;background:var(--porcelain);color:var(--enamel);font:700 13px "Barlow Semi Condensed";letter-spacing:.14em;text-transform:uppercase}
+.board .r{display:grid;grid-template-columns:14px 1fr 70px;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--rule);font-size:16px}
+.board .r b{text-align:right;font:700 20px "Barlow Semi Condensed"}
+.on{width:10px;height:10px;border-radius:50%;background:var(--green)}.off{width:10px;height:10px;border-radius:50%;background:#5A6385}
+.host{font:600 11px "Barlow Semi Condensed";letter-spacing:.14em;border:1px solid var(--dim);color:var(--dim);padding:3px 8px;margin-left:8px}
+.next{margin-top:24px}.next .r{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--rule);font-size:15px}
+</style></head><body>
+<header class="top"><span class="logo">Six Hats</span><b style="font-size:17px;font-weight:600">Q4 pricing change</b><span class="code">K7M2QX</span><span class="sp"></span><button class="btn">Copy invite link</button></header>
+<section class="line"><span class="term">Line · Evaluate an idea · 7 stations</span>
+ <div class="track"></div>
+ <span class="st past" style="left:64px"></span><span class="st past" style="left:calc(64px + (100% - 128px)*.14)"></span>
+ <span class="st past" style="left:calc(64px + (100% - 128px)*.28)"></span><span class="st now" style="left:calc(64px + (100% - 128px)*.43)"></span>
+ <span class="st next" style="left:calc(64px + (100% - 128px)*.57)"></span><span class="st next" style="left:calc(64px + (100% - 128px)*.71)"></span>
+ <span class="st next" style="left:calc(64px + (100% - 128px)*.85)"></span><span class="st next" style="left:calc(100% - 64px)"></span>
+ <span class="lab" style="left:64px"><b>Blue</b><small>Frame</small></span>
+ <span class="lab" style="left:calc(64px + (100% - 128px)*.14)"><b>White</b><small>Facts</small></span>
+ <span class="lab" style="left:calc(64px + (100% - 128px)*.28)"><b>Yellow</b><small>Benefits</small></span>
+ <span class="lab now" style="left:calc(64px + (100% - 128px)*.43)"><b>Black</b><small>Now · risks</small></span>
+ <span class="lab" style="left:calc(64px + (100% - 128px)*.57)"><b>Red</b><small>Feelings</small></span>
+ <span class="lab" style="left:calc(64px + (100% - 128px)*.71)"><b>Green</b><small>Ideas</small></span>
+ <span class="lab" style="left:calc(64px + (100% - 128px)*.85)"><b>Blue</b><small>Conclude</small></span>
+ <span class="lab" style="left:calc(100% - 64px)"><b>Vote</b><small>Terminus</small></span>
+</section>
+<main>
+ <section class="left">
+  <div class="head"><div><span class="k">Station 4 of 7 · Should we move the Pro plan to annual billing only?</span>
+   <div class="hatname"><span class="pill">⚠ Black hat</span><span class="k">Caution &amp; risks</span></div>
+   <h1>What could go wrong if Pro goes annual-only?</h1></div>
+   <div class="clock"><span class="k">Arrives at reveal in</span><div class="t">2:41</div></div></div>
+  <div class="ctrl"><button class="btn">Pause</button><button class="btn">+1 min</button><button class="btn red">Reveal now</button><button class="btn">Skip station</button></div>
+  <div class="compose"><textarea>Monthly SMB customers churn at renewal instead of upgrading</textarea><button class="btn red">Add point</button></div>
+  <span class="k">Your points · only you see these until the reveal</span>
+  <div class="pts"><div class="p"><p>Annual invoices exceed card limits for small teams in India.</p><small>Edit · Delete</small></div>
+   <div class="p"><p>Sales loses the monthly trial-to-paid path we use in demos.</p><small>Edit · Delete</small></div></div>
+ </section>
+ <aside>
+  <div class="board"><div class="hd"><span>On this platform</span><span style="text-align:right">Points</span></div>
+   <div class="r"><span class="on"></span><span>Priya<span class="host">HOST</span></span><b>1</b></div>
+   <div class="r"><span class="on"></span><span>Asha</span><b>2</b></div>
+   <div class="r"><span class="on"></span><span>Meera</span><b>3</b></div>
+   <div class="r"><span class="on"></span><span>Dev</span><b>1</b></div>
+   <div class="r"><span class="off"></span><span style="color:var(--dim)">Ravi</span><b style="color:var(--dim)">0</b></div></div>
+  <div class="next"><span class="k">Next stations</span>
+   <div class="r"><span>Red · Feelings</span><span class="cond">1:00</span></div>
+   <div class="r"><span>Green · Ideas</span><span class="cond">5:00</span></div>
+   <div class="r"><span>Blue · Conclude</span><span class="cond">2:00</span></div></div>
+ </aside>
+</main>
+</body></html>
