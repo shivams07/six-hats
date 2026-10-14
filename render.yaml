@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: six-hats
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /healthz
+    envVars:
+      - key: TEAM_PASSCODE
+        sync: false
+      - key: TRUST_PROXY
+        value: "1"

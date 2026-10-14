@@ -52,6 +52,12 @@ fly deploy
 
 Keep exactly one machine: sessions live in that machine's memory and SQLite file.
 
+## Deploy to Render (free)
+
+Open https://render.com/deploy?repo=https://github.com/shivams07/six-hats, enter a `TEAM_PASSCODE`, and apply. `render.yaml` sets up one free Docker web service.
+
+The free plan has no persistent disk: the archive and saved templates are wiped whenever the service redeploys, restarts or sleeps (after 15 minutes with no traffic). Live sessions keep it awake while people are connected. Export each summary before you close a session.
+
 ## Configuration
 
 | Variable | Default | Purpose |
@@ -60,7 +66,7 @@ Keep exactly one machine: sessions live in that machine's memory and SQLite file
 | `PORT` | `8080` | HTTP port |
 | `DATA_DIR` | `./data` (`/data` in the image) | SQLite location |
 | `WEB_DIR` | unset (`/app/dist/web` in the image) | Built UI to serve; unset in development, where Vite serves it |
-| `TRUST_PROXY` | unset (no proxy trusted) | Number of trusted reverse proxies; set `1` on Fly, leave unset when exposed directly |
+| `TRUST_PROXY` | unset (no proxy trusted) | Number of trusted reverse proxies; set `1` on Fly or Render, leave unset when exposed directly |
 
 ## Running a session
 
