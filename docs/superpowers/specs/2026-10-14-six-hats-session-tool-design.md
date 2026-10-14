@@ -28,36 +28,48 @@ User accounts or SSO; anonymous points; horizontal scaling or multi-instance dep
 
 ## 4. Architecture
 
-One Node 20 + TypeScript process serves the built web UI, a small HTTP API and a Socket.IO endpoint. State for live sessions is held in memory and written through to SQLite after every accepted command. Sized for one team: 2–50 participants per session, a handful of concurrent sessions.
+One Node 24 LTS + TypeScript process (Node 20 reached end-of-life in April 2026) serves the built web UI, a small HTTP API and a Socket.IO endpoint. State for live sessions is held in memory and written through to SQLite after every accepted command. Sized for one team: 2–50 participants per session, a handful of concurrent sessions.
 
 ```
 six-hats/
-  package.json            npm workspaces: shared, server, web
+  package.json            one package; scripts for dev, build, test, start
   shared/src/
-    hats.ts               hat definitions, default timers/prompts, built-in presets
+    hats.ts               hat definitions, default timers/prompts, built-in presets, limits
+    rules.ts              isStepRevealed, canWrite, rankByVotes (used by server and web)
     protocol.ts           Command, View and API types shared by server and web
   server/src/
-    index.ts              boot: open store, load live sessions, re-arm timers, listen
+    index.ts              reads env, calls startServer
+    server.ts             startServer(): store, service, timers, Express, Socket.IO
     app.ts                Express app: static web, JSON API, security headers
-    auth.ts               passcode check, token mint/hash/verify, rate limiting
-    engine.ts             pure state machine: (session, actor, command, now) -> session | error
+    auth.ts               passcode check, failure limiter, command rate limiter
+    ids.ts                ids, session codes, tokens, token hashing
+    session.ts            Session types and the handler signature
+    validate.ts           input validation and limits
+    engine.ts             createSession, joinSession, applyCommand (the dispatcher)
+    flow.ts               step-flow handlers: start, timer, reveal, advance, edit upcoming
+    contributions.ts      point, vote, decision and close handlers
     views.ts              pure projection: (session, viewer, now) -> View (redaction lives here)
-    store.ts              SQLite: sessions + templates
-    timers.ts             one timeout per running step; fires timerExpired into the engine
-    realtime.ts           Socket.IO: handshake, command dispatch, per-viewer broadcast, presence
     export.ts             pure: session -> Markdown summary
+    store.ts              SQLite: sessions + templates
+    sessions.ts           SessionService: in-memory sessions, write path, listeners
+    timers.ts             one timeout per running step; fires timerExpired into the service
+    realtime.ts           Socket.IO: handshake, command dispatch, per-viewer broadcast, presence
   server/test/            Vitest unit + integration tests
   web/src/
-    main.ts, router.ts, api.ts, socket.ts
-    pages/                Home, Create, Join, Board, Summary, Archive
-    components/           FlowBuilder, HatBadge, Countdown, PointList, PointComposer,
-                          Roster, VotePanel, DecisionPanel
+    main.ts, App.vue, router.ts, api.ts, socket.ts, toast.ts, files.ts, labels.ts,
+    points.ts, session-context.ts, styles.css
+    pages/                HomePage, CreatePage, BoardPage, ArchivePage
+    components/           FlowBuilder, FlowEditor, FlowOutline, HatBadge, Countdown,
+                          SessionBoard, SessionHeader, Roster, LobbyPanel, StepPanel,
+                          FacilitatorControls, PointComposer, PointList, StepGroups,
+                          VotingPanel, RankedList, DecisionPanel, ActionList, SummaryView,
+                          CreateForm, ArchiveList, PasscodeGate, ToastHost
   Dockerfile, fly.toml, README.md
 ```
 
-Stack: Express, Socket.IO, better-sqlite3 (synchronous, which keeps "persist then commit" trivial), helmet, Vue 3 + Vite + Vue Router, Vitest. No other runtime dependencies.
+Stack: TypeScript 5.9, Express 5, Socket.IO 4, better-sqlite3 (synchronous, which keeps "persist then commit" trivial), helmet, Vue 3 + Vite 7 + Vue Router 4, Vitest 4. No other runtime dependencies.
 
-**Unit boundaries.** `engine`, `views` and `export` are pure functions with injected `now`; they hold every rule in the product and are where the tests concentrate. `realtime`, `timers`, `store` and `app` are thin I/O shells around them.
+**Unit boundaries.** `engine`, `flow`, `contributions`, `views` and `export` are pure functions with injected `now`; they hold every rule in the product and are where the tests concentrate. `sessions`, `realtime`, `timers`, `store` and `app` are thin I/O shells around them.
 
 ## 5. The hats
 
@@ -107,7 +119,7 @@ The step reaches `revealed` when the timer hits 0:00 (`timerExpired`), when the 
 
 Facilitator, with team passcode. Inputs: title (≤120), focus question (≤500), facilitator's own display name (≤40), votes per person (1–10, default 3), and the flow.
 
-**Flow builder.** An ordered list of 1–20 steps. Each step: hat (any of six, repeats allowed), duration (0:30–30:00, defaults per §5), optional prompt (≤300) overriding the hat's default. Add, remove, duplicate, reorder (drag and up/down buttons). Shows total planned time. Start from a preset, a team template, or blank. **Save as team template** stores the current flow under a name (≤60).
+**Flow builder.** An ordered list of 1–20 steps. Each step: hat (any of six, repeats allowed), duration (0:30–30:00, defaults per §5), optional prompt (≤300) overriding the hat's default. Add, remove, duplicate, reorder (up/down buttons). Shows total planned time. Start from a preset, a team template, or blank. **Save as team template** stores the current flow under a name (≤60).
 
 On create the facilitator receives the participant link `/s/<CODE>`, the 6-character code, and the private admin link `/s/<CODE>/admin#t=<token>` with copy buttons and a "save this link" warning. The admin token is also kept in the facilitator's localStorage.
 
@@ -157,7 +169,7 @@ All mutations are Socket.IO `command` events with an ack. The engine validates a
 | `vote(pointId)` / `unvote(pointId)` | any participant | voting, not closed, within limit |
 | `closeVoting` / `skipVoting` | facilitator | voting |
 | `goToDecision` | facilitator | voting with votingClosed |
-| `setDecision(text)`, `addAction`, `updateAction`, `removeAction` | facilitator | decision |
+| `setDecision(text)`, `addAction`, `removeAction` | facilitator | decision |
 | `closeSession` | facilitator | decision |
 | `timerExpired` | server only (from `timers.ts`) | running, writing, `now ≥ endsAt` |
 
@@ -254,7 +266,7 @@ Sections with no content are omitted. Vote counts appear only if voting was clos
 - **Join** `/s/:code` — name entry; skipped if a valid token for this code is in localStorage.
 - **Board** `/s/:code` (joined) and `/s/:code/admin` (facilitator) — one component tree; facilitator controls render only with a facilitator View. Participant layout works at phone width.
 - **Summary** — shown in place of the board once closed.
-- **Archive** `/archive` — passcode; list newest first; closed → Summary; live → "Open as facilitator" (mints a facilitator link).
+- **Archive** `/archive` — passcode; list newest first; each row mints a fresh facilitator link and opens the board — closed sessions show the read-only Summary ("View summary"), live ones the facilitator console ("Open as facilitator").
 
 All user text renders through Vue text interpolation; `v-html` is never used on user content.
 
@@ -285,8 +297,8 @@ All user text renders through Vue text interpolation; `v-html` is never used on 
 
 ## 16. Deployment
 
-- Multi-stage `Dockerfile`: build `shared`, `server`, `web`; runtime image runs `node server/dist/index.js` on a slim Node 20 base.
-- Environment: `TEAM_PASSCODE` (required; boot fails without it), `PORT` (default 8080), `DATA_DIR` (default `/data`).
+- Multi-stage `Dockerfile`: build `shared`, `server`, `web`; runtime image runs `node dist/server/src/index.js` on a slim Node 24 base.
+- Environment: `TEAM_PASSCODE` (required; boot fails without it), `PORT` (default 8080), `DATA_DIR` (default `./data`; the image sets `/data`), `WEB_DIR` (built UI to serve; the image sets `/app/dist/web`, unset in dev where Vite serves the UI).
 - `fly.toml`: one machine, 1 GB volume mounted at `/data`, HTTPS, health check on `GET /healthz`. Render's free tier has no persistent disk, so the archive would be lost on redeploy there.
 - `README.md`: local dev (`npm run dev` runs server and Vite together), `docker run`, `fly deploy`, setting the passcode.
 - Deploying to Fly.io is done by the user, or by Claude only on explicit instruction.
