@@ -64,6 +64,7 @@ async function deleteSelectedTemplate() {
     await api.deleteTemplate(id);
     templates.value = templates.value.filter((t) => t.id !== id);
     startFrom.value = `preset:${DEFAULT_PRESET.id}`;
+    applyStart();
   } catch (e) {
     showToast(errorMessage(e));
   }
@@ -169,7 +170,14 @@ async function copy(text: string, what: string) {
       <FlowBuilder v-model="steps" />
       <div class="row wrap">
         <label class="sr-only" for="template-name">Template name</label>
-        <input id="template-name" v-model="templateName" class="grow" :maxlength="LIMITS.templateName" placeholder="Name this flow to reuse it" />
+        <input
+          id="template-name"
+          v-model="templateName"
+          class="grow"
+          :maxlength="LIMITS.templateName"
+          placeholder="Name this flow to reuse it"
+          @keydown.enter.prevent="templateName.trim() && saveTemplate()"
+        />
         <button type="button" class="btn" :disabled="!templateName.trim()" @click="saveTemplate">Save as team template</button>
       </div>
     </section>

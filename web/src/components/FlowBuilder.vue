@@ -19,10 +19,15 @@ function setHat(index: number, hat: HatId) {
   replace(index, { hat, durationSec: HATS[hat].defaultDurationSec, ...(prompt ? { prompt } : {}) });
 }
 
-function setMinutes(index: number, raw: string) {
-  const minutes = Number(raw);
-  if (!Number.isFinite(minutes)) return;
-  const durationSec = Math.min(LIMITS.maxDurationSec, Math.max(LIMITS.minDurationSec, Math.round(minutes * 60)));
+function setMinutes(index: number, event: Event) {
+  const input = event.target as HTMLInputElement;
+  const minutes = Number(input.value);
+  if (input.value.trim() === '' || !Number.isFinite(minutes)) {
+    input.value = String(props.modelValue[index]!.durationSec / 60);
+    return;
+  }
+  const durationSec = Math.min(LIMITS.maxDurationSec, Math.max(LIMITS.minDurationSec, Math.round(minutes * 2) * 30));
+  input.value = String(durationSec / 60);
   replace(index, { ...props.modelValue[index]!, durationSec });
 }
 
@@ -60,12 +65,12 @@ const valueOf = (e: Event) => (e.target as HTMLInputElement | HTMLSelectElement)
           <label class="inline-field">
             <input
               type="number"
-              min="0.5"
-              max="30"
+              :min="LIMITS.minDurationSec / 60"
+              :max="LIMITS.maxDurationSec / 60"
               step="0.5"
               :value="step.durationSec / 60"
               :aria-label="`Step ${startNumber + i} minutes`"
-              @change="setMinutes(i, valueOf($event))"
+              @change="setMinutes(i, $event)"
             />
             <span class="muted small">min</span>
           </label>
@@ -82,6 +87,7 @@ const valueOf = (e: Event) => (e.target as HTMLInputElement | HTMLSelectElement)
           :maxlength="LIMITS.prompt"
           :aria-label="`Step ${startNumber + i} prompt`"
           @input="setPrompt(i, valueOf($event))"
+          @keydown.enter.prevent
         />
       </li>
     </ol>
