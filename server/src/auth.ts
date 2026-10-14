@@ -6,8 +6,11 @@ export function passcodeMatches(given: unknown, expected: string): boolean {
   return typeof given === 'string' && timingSafeEqual(digest(given), digest(expected));
 }
 
+const SWEEP_EVERY = 100;
+
 export class FailureLimiter {
   private readonly failures = new Map<string, number[]>();
+  private calls = 0;
 
   constructor(
     private readonly max = 10,
@@ -15,12 +18,25 @@ export class FailureLimiter {
     private readonly clock: () => number = Date.now,
   ) {}
 
+  get size(): number {
+    return this.failures.size;
+  }
+
   isBlocked(key: string): boolean {
     return this.recent(key).length >= this.max;
   }
 
   recordFailure(key: string): void {
+    if (++this.calls % SWEEP_EVERY === 0) this.sweep();
     this.failures.set(key, [...this.recent(key), this.clock()]);
+  }
+
+  // Keys never seen again would otherwise stay in the map forever.
+  private sweep(): void {
+    const cutoff = this.clock() - this.windowMs;
+    for (const [key, stamps] of this.failures) {
+      if (stamps.every((t) => t <= cutoff)) this.failures.delete(key);
+    }
   }
 
   private recent(key: string): number[] {

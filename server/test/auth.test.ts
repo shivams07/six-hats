@@ -23,6 +23,15 @@ describe('FailureLimiter', () => {
     now = 1_001;
     expect(limiter.isBlocked('ip')).toBe(false);
   });
+
+  it('sweeps keys whose failures have all expired', () => {
+    let now = 0;
+    const limiter = new FailureLimiter(10, 1_000, () => now);
+    for (let i = 0; i < 150; i++) limiter.recordFailure(`old-${i}`);
+    now = 1_001;
+    for (let i = 0; i < 100; i++) limiter.recordFailure(`new-${i}`);
+    expect(limiter.size).toBeLessThanOrEqual(100);
+  });
 });
 
 describe('SlidingWindow', () => {
