@@ -1,12 +1,13 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { startServer, type RunningServer } from '../src/server.js';
 
 const PASSCODE = 'team-secret';
 const WITH_PASSCODE = { 'x-team-passcode': PASSCODE };
 const FLOW = { title: 'Pricing', focus: 'Annual only?', facilitatorName: 'Fac', votesPerPerson: 3, steps: [{ hat: 'white', durationSec: 60 }] };
+const SPA_HTML = '<!doctype html><title>spa</title>';
 
 let server: RunningServer;
 let dir: string;
@@ -111,5 +112,43 @@ describe('HTTP API', () => {
     expect((await call('POST', '/api/templates', { name: '', steps: [] }, WITH_PASSCODE)).status).toBe(400);
     expect((await call('DELETE', `/api/templates/${id}`, undefined, WITH_PASSCODE)).status).toBe(204);
     expect((await call('DELETE', `/api/templates/${id}`, undefined, WITH_PASSCODE)).status).toBe(404);
+  });
+
+  it.each([
+    { method: 'GET', path: '/api/sessions' },
+    { method: 'POST', path: '/api/sessions/ABC234/facilitator-link' },
+    { method: 'GET', path: '/api/templates' },
+    { method: 'POST', path: '/api/templates', body: { name: 'x', steps: [] } },
+    { method: 'DELETE', path: '/api/templates/abc' },
+  ])('requires the team passcode for $method $path', async ({ method, path, body }) => {
+    const res = await call(method, path, body);
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: 'Wrong team passcode' });
+  });
+
+  it('serves the single-page app for deep links when WEB_DIR is relative', async () => {
+    const webDir = mkdtempSync(join(tmpdir(), 'six-hats-web-'));
+    const spaDataDir = mkdtempSync(join(tmpdir(), 'six-hats-spa-'));
+    writeFileSync(join(webDir, 'index.html'), SPA_HTML);
+    try {
+      const spa = await startServer({ passcode: PASSCODE, dataDir: spaDataDir, port: 0, webDir: relative(process.cwd(), webDir) });
+      try {
+        const base = `http://127.0.0.1:${spa.port}`;
+        const root = await fetch(`${base}/`);
+        expect(root.status).toBe(200);
+        expect(await root.text()).toBe(SPA_HTML);
+        const deepLink = await fetch(`${base}/s/ABC123`);
+        expect(deepLink.status).toBe(200);
+        expect(await deepLink.text()).toBe(SPA_HTML);
+        const api = await fetch(`${base}/api/nope`);
+        expect(api.status).toBe(404);
+        expect(await api.json()).toEqual({ error: 'Not found' });
+      } finally {
+        await spa.close();
+      }
+    } finally {
+      rmSync(webDir, { recursive: true, force: true });
+      rmSync(spaDataDir, { recursive: true, force: true });
+    }
   });
 });

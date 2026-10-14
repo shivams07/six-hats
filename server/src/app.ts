@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { LIMITS } from '../../shared/src/hats.js';
 import { FailureLimiter, passcodeMatches } from './auth.js';
 import { toMarkdown } from './export.js';
@@ -103,11 +103,12 @@ export function createApp({ service, store, passcode, webDir, clock = Date.now }
     res.status(404).json({ error: 'Not found' });
   });
 
-  if (webDir && existsSync(join(webDir, 'index.html'))) {
-    app.use(express.static(webDir));
+  const root = webDir ? resolve(webDir) : undefined;
+  if (root && existsSync(join(root, 'index.html'))) {
+    app.use(express.static(root));
     app.use((req, res, next) => {
       if (req.method !== 'GET') return next();
-      res.sendFile(join(webDir, 'index.html'));
+      res.sendFile(join(root, 'index.html'));
     });
   }
 
