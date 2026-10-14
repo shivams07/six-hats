@@ -71,6 +71,7 @@ const valueOf = (e: Event) => (e.target as HTMLInputElement | HTMLSelectElement)
               :value="step.durationSec / 60"
               :aria-label="`Step ${startNumber + i} minutes`"
               @change="setMinutes(i, $event)"
+              @keydown.enter.prevent="setMinutes(i, $event)"
             />
             <span class="muted small">min</span>
           </label>

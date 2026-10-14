@@ -21,6 +21,7 @@ const startFrom = ref(`preset:${DEFAULT_PRESET.id}`);
 const templates = ref<Template[]>([]);
 const templateName = ref('');
 const busy = ref(false);
+const savingTemplate = ref(false);
 const error = ref('');
 const created = ref<{ code: string; token: string } | null>(null);
 
@@ -46,6 +47,8 @@ function applyStart() {
 }
 
 async function saveTemplate() {
+  if (savingTemplate.value) return;
+  savingTemplate.value = true;
   try {
     const template = await api.saveTemplate(templateName.value, steps.value);
     templates.value = [...templates.value, template].sort((a, b) => a.name.localeCompare(b.name));
@@ -53,6 +56,8 @@ async function saveTemplate() {
     showToast(`Saved template "${template.name}"`, 'info');
   } catch (e) {
     showToast(errorMessage(e));
+  } finally {
+    savingTemplate.value = false;
   }
 }
 
@@ -178,7 +183,7 @@ async function copy(text: string, what: string) {
           placeholder="Name this flow to reuse it"
           @keydown.enter.prevent="templateName.trim() && saveTemplate()"
         />
-        <button type="button" class="btn" :disabled="!templateName.trim()" @click="saveTemplate">Save as team template</button>
+        <button type="button" class="btn" :disabled="!templateName.trim() || savingTemplate" @click="saveTemplate">Save as team template</button>
       </div>
     </section>
 
