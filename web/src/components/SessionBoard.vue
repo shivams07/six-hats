@@ -4,10 +4,13 @@ import type { Command } from '@shared/protocol';
 import { RUN_KEY } from '../session-context';
 import { useSessionSocket } from '../socket';
 import { showToast } from '../toast';
+import DecisionPanel from './DecisionPanel.vue';
 import LobbyPanel from './LobbyPanel.vue';
 import Roster from './Roster.vue';
 import SessionHeader from './SessionHeader.vue';
 import StepPanel from './StepPanel.vue';
+import SummaryView from './SummaryView.vue';
+import VotingPanel from './VotingPanel.vue';
 
 const props = defineProps<{ code: string; token: string }>();
 const emit = defineEmits<{ rejected: [reason: string] }>();
@@ -35,7 +38,9 @@ provide(RUN_KEY, run);
       <div class="board-main stack">
         <LobbyPanel v-if="view.status === 'lobby'" :view="view" />
         <StepPanel v-else-if="view.status === 'running'" :view="view" :offset="clockOffset" />
-        <section v-else class="card"><p class="muted">Voting, decision and summary views arrive in Task 14.</p></section>
+        <VotingPanel v-else-if="view.status === 'voting'" :view="view" />
+        <DecisionPanel v-else-if="view.status === 'decision'" :view="view" />
+        <SummaryView v-else :view="view" :token="token" />
       </div>
       <aside class="board-side"><Roster :view="view" /></aside>
     </div>
