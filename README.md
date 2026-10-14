@@ -39,6 +39,8 @@ docker build -t six-hats .
 docker run --rm -p 8080:8080 -e TEAM_PASSCODE=change-me -v six-hats-data:/data six-hats
 ```
 
+The container is exposed directly here, so leave `TRUST_PROXY` unset. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies in front of it (see Configuration); otherwise the passcode limiter sees only the proxy's address.
+
 ## Deploy to Fly.io
 
 ```bash
@@ -58,6 +60,7 @@ Keep exactly one machine: sessions live in that machine's memory and SQLite file
 | `PORT` | `8080` | HTTP port |
 | `DATA_DIR` | `./data` (`/data` in the image) | SQLite location |
 | `WEB_DIR` | unset (`/app/dist/web` in the image) | Built UI to serve; unset in development, where Vite serves it |
+| `TRUST_PROXY` | unset (no proxy trusted) | Number of trusted reverse proxies; set `1` on Fly, leave unset when exposed directly |
 
 ## Running a session
 

@@ -57,11 +57,19 @@ export class SlidingWindow {
     private readonly clock: () => number = Date.now,
   ) {}
 
+  isFull(): boolean {
+    return this.prune(this.clock()) >= this.max;
+  }
+
   tryTake(): boolean {
     const now = this.clock();
-    this.stamps = this.stamps.filter((t) => t > now - this.windowMs);
-    if (this.stamps.length >= this.max) return false;
+    if (this.prune(now) >= this.max) return false;
     this.stamps.push(now);
     return true;
+  }
+
+  private prune(now: number): number {
+    this.stamps = this.stamps.filter((t) => t > now - this.windowMs);
+    return this.stamps.length;
   }
 }

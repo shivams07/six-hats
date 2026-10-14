@@ -44,4 +44,15 @@ describe('SlidingWindow', () => {
     now = 1_001;
     expect(window.tryTake()).toBe(true);
   });
+
+  it('reports when it is full without taking a slot', () => {
+    let now = 0;
+    const window = new SlidingWindow(1, 1_000, () => now);
+    expect(window.isFull()).toBe(false);
+    expect(window.isFull()).toBe(false);
+    expect(window.tryTake()).toBe(true);
+    expect(window.isFull()).toBe(true);
+    now = 1_001;
+    expect(window.isFull()).toBe(false);
+  });
 });

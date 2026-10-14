@@ -14,6 +14,7 @@ export interface ServerOptions {
   port: number;
   webDir?: string;
   clock?: () => number;
+  trustProxy?: boolean | number;
 }
 
 export interface RunningServer {
@@ -21,7 +22,7 @@ export interface RunningServer {
   close(): Promise<void>;
 }
 
-export async function startServer({ passcode, dataDir, port, webDir, clock = Date.now }: ServerOptions): Promise<RunningServer> {
+export async function startServer({ passcode, dataDir, port, webDir, clock = Date.now, trustProxy }: ServerOptions): Promise<RunningServer> {
   mkdirSync(dataDir, { recursive: true });
   const store = new Store(join(dataDir, 'six-hats.db'));
   const service = new SessionService(store, clock);
@@ -29,7 +30,7 @@ export async function startServer({ passcode, dataDir, port, webDir, clock = Dat
   service.subscribe((s) => timers.sync(s));
   for (const s of service.loadLive()) timers.sync(s);
 
-  const http = createServer(createApp({ service, store, passcode, webDir, clock }));
+  const http = createServer(createApp({ service, store, passcode, webDir, clock, trustProxy }));
   const io = new Server(http, { serveClient: false, maxHttpBufferSize: 64 * 1024 });
   attachRealtime(io, service, clock);
 

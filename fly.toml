@@ -7,6 +7,7 @@ primary_region = "bom"
 [env]
   PORT = "8080"
   DATA_DIR = "/data"
+  TRUST_PROXY = "1"
 
 [[mounts]]
   source = "six_hats_data"

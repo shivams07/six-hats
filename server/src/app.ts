@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { LIMITS } from '../../shared/src/hats.js';
-import { FailureLimiter, passcodeMatches } from './auth.js';
+import { FailureLimiter, SlidingWindow, passcodeMatches } from './auth.js';
 import { toMarkdown } from './export.js';
 import { newId } from './ids.js';
 import type { SessionService } from './sessions.js';
@@ -16,21 +16,30 @@ export interface AppDeps {
   passcode: string;
   webDir?: string;
   clock?: () => number;
+  trustProxy?: boolean | number;
 }
 
-export function createApp({ service, store, passcode, webDir, clock = Date.now }: AppDeps): express.Express {
-  const app = express();
-  const failures = new FailureLimiter(10, 60_000, clock);
+const FAILURE_WINDOW_MS = 60_000;
+const GLOBAL_MAX_FAILURES = 100;
 
-  app.set('trust proxy', 1);
+export function createApp({ service, store, passcode, webDir, clock = Date.now, trustProxy = false }: AppDeps): express.Express {
+  const app = express();
+  const failures = new FailureLimiter(10, FAILURE_WINDOW_MS, clock);
+  // Caps wrong guesses across all clients, so spoofed or rotating addresses can't dodge the per-client limit.
+  const allFailures = new SlidingWindow(GLOBAL_MAX_FAILURES, FAILURE_WINDOW_MS, clock);
+
+  app.set('trust proxy', trustProxy);
   app.use(helmet({ contentSecurityPolicy: { directives: { upgradeInsecureRequests: null } } }));
   app.use(express.json({ limit: '64kb' }));
 
   const requirePasscode = <P>(req: Request<P>, res: Response, next: NextFunction) => {
     const key = req.ip ?? 'unknown';
-    if (failures.isBlocked(key)) return void res.status(429).json({ error: 'Too many wrong passcodes, wait a minute' });
+    if (allFailures.isFull() || failures.isBlocked(key)) {
+      return void res.status(429).json({ error: 'Too many wrong passcodes, wait a minute' });
+    }
     if (!passcodeMatches(req.get('x-team-passcode'), passcode)) {
       failures.recordFailure(key);
+      allFailures.tryTake();
       return void res.status(401).json({ error: 'Wrong team passcode' });
     }
     next();

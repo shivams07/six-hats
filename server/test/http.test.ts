@@ -11,10 +11,12 @@ const SPA_HTML = '<!doctype html><title>spa</title>';
 
 let server: RunningServer;
 let dir: string;
+let now = Date.now();
 
 beforeEach(async () => {
   dir = mkdtempSync(join(tmpdir(), 'six-hats-http-'));
-  server = await startServer({ passcode: PASSCODE, dataDir: dir, port: 0 });
+  now = Date.now();
+  server = await startServer({ passcode: PASSCODE, dataDir: dir, port: 0, clock: () => now });
 });
 
 afterEach(async () => {
@@ -22,13 +24,23 @@ afterEach(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-function call(method: string, path: string, body?: unknown, headers: Record<string, string> = {}) {
-  return fetch(`http://127.0.0.1:${server.port}${path}`, {
+/** Reads the whole body up front so no keep-alive socket is left holding an unread response. */
+async function call(method: string, path: string, body?: unknown, headers: Record<string, string> = {}) {
+  const res = await fetch(`http://127.0.0.1:${server.port}${path}`, {
     method,
     headers: { ...(body === undefined ? {} : { 'content-type': 'application/json' }), ...headers },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+  const text = await res.text();
+  return { status: res.status, headers: res.headers, text: async () => text, json: async () => JSON.parse(text) as unknown };
 }
+
+async function restart(options: { trustProxy?: boolean | number }) {
+  await server.close();
+  server = await startServer({ passcode: PASSCODE, dataDir: dir, port: 0, clock: () => now, ...options });
+}
+
+const fromClient = (ip: string, passcode: string) => ({ 'x-forwarded-for': ip, 'x-team-passcode': passcode });
 
 async function createSession() {
   const res = await call('POST', '/api/sessions', FLOW, WITH_PASSCODE);
@@ -54,6 +66,33 @@ describe('HTTP API', () => {
       expect((await call('POST', '/api/passcode/check', undefined, { 'x-team-passcode': 'nope' })).status).toBe(401);
     }
     expect((await call('POST', '/api/passcode/check', undefined, WITH_PASSCODE)).status).toBe(429);
+  });
+
+  it('ignores X-Forwarded-For unless a proxy is trusted', async () => {
+    for (let i = 0; i < 10; i++) {
+      expect((await call('POST', '/api/passcode/check', undefined, fromClient(`10.0.0.${i}`, 'nope'))).status).toBe(401);
+    }
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.0.0.99', PASSCODE))).status).toBe(429);
+  });
+
+  it('keys the limiter on X-Forwarded-For when one proxy is trusted', async () => {
+    await restart({ trustProxy: 1 });
+    for (let i = 0; i < 10; i++) {
+      expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.0.0.1', 'nope'))).status).toBe(401);
+    }
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.0.0.1', PASSCODE))).status).toBe(429);
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.0.0.2', PASSCODE))).status).toBe(204);
+  });
+
+  it('answers 429 to every client once 100 wrong passcodes have been seen in a minute', async () => {
+    await restart({ trustProxy: 1 });
+    for (let i = 0; i < 100; i++) {
+      expect((await call('POST', '/api/passcode/check', undefined, fromClient(`10.1.0.${i}`, 'nope'))).status).toBe(401);
+    }
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.2.0.1', PASSCODE))).status).toBe(429);
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.2.0.2', 'nope'))).status).toBe(429);
+    now += 60_001;
+    expect((await call('POST', '/api/passcode/check', undefined, fromClient('10.2.0.1', PASSCODE))).status).toBe(204);
   });
 
   it('creates a session and lets people join by code', async () => {
