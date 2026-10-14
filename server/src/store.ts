@@ -56,8 +56,15 @@ export class Store {
   }
 
   listLive(): Session[] {
-    const rows = this.db.prepare(`SELECT doc FROM sessions WHERE status != 'closed'`).all() as { doc: string }[];
-    return rows.map((r) => JSON.parse(r.doc) as Session);
+    const rows = this.db.prepare(`SELECT id, doc FROM sessions WHERE status != 'closed'`).all() as { id: string; doc: string }[];
+    return rows.flatMap((r) => {
+      try {
+        return [JSON.parse(r.doc) as Session];
+      } catch (err) {
+        console.error(`Skipping session ${r.id}: corrupt document`, err);
+        return [];
+      }
+    });
   }
 
   listSummaries(): SessionSummary[] {

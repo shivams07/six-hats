@@ -34,8 +34,11 @@ export class Timers {
 
   private fire(id: string): void {
     this.handles.delete(id);
-    const result = this.target.dispatch(id, null, { type: 'timerExpired' });
-    if (result.ok) return;
+    try {
+      if (this.target.dispatch(id, null, { type: 'timerExpired' }).ok) return;
+    } catch (err) {
+      console.error(`Timer dispatch failed for session ${id}`, err);
+    }
     const current = this.target.get(id);
     if (current) this.sync(current, RETRY_MS);
   }

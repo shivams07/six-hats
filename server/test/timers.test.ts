@@ -42,6 +42,24 @@ describe('Timers', () => {
     expect(dispatch).toHaveBeenCalledTimes(2);
   });
 
+  it('retries shortly when dispatch throws', () => {
+    const s = writingSession();
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const dispatch = vi
+      .fn()
+      .mockImplementationOnce(() => {
+        throw new Error('boom');
+      })
+      .mockReturnValue({ ok: true });
+    new Timers({ get: () => s, dispatch }, () => Date.now()).sync(s);
+    vi.advanceTimersByTime(240_000);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining(s.id), expect.any(Error));
+    vi.advanceTimersByTime(250);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    log.mockRestore();
+  });
+
   it('stopAll cancels every timer', () => {
     const s = writingSession();
     const dispatch = vi.fn(() => ({ ok: true as const }));

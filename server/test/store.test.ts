@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import Database from 'better-sqlite3';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { describe, expect, it, vi } from 'vitest';
 import { Store } from '../src/store.js';
 import { makeSession, run, T0 } from './fixtures.js';
 
@@ -29,6 +33,26 @@ describe('Store', () => {
     store.save(s);
     store.save({ ...s, id: 'session-2', code: 'XYZ789', status: 'closed', closedAt: T0 });
     expect(store.listLive().map((x) => x.id)).toEqual(['session-1']);
+  });
+
+  it('skips and logs a live session whose document is corrupt', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'six-hats-store-'));
+    const file = join(dir, 'six-hats.db');
+    const store = new Store(file);
+    const raw = new Database(file);
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const { s } = makeSession();
+      store.save(s);
+      raw.prepare(`INSERT INTO sessions (id, code, status, title, created_at, doc) VALUES ('broken-1', 'BRK123', 'running', 'Broken', 0, '{not json')`).run();
+      expect(store.listLive().map((x) => x.id)).toEqual(['session-1']);
+      expect(log).toHaveBeenCalledWith(expect.stringContaining('broken-1'), expect.anything());
+    } finally {
+      log.mockRestore();
+      raw.close();
+      store.close();
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('summarises sessions newest first', () => {

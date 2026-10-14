@@ -1,5 +1,5 @@
 import type { Server, Socket } from 'socket.io';
-import type { CommandAck } from '../../shared/src/protocol.js';
+import { SOCKET_ERRORS, type CommandAck } from '../../shared/src/protocol.js';
 import { SlidingWindow } from './auth.js';
 import type { AnyCommand } from './engine.js';
 import type { Session } from './session.js';
@@ -27,12 +27,17 @@ export function attachRealtime(io: Server, service: SessionService, clock: () =>
   service.subscribe(broadcast);
 
   io.use((socket, next) => {
-    const { code, token } = (socket.handshake.auth ?? {}) as Record<string, unknown>;
-    const auth = service.authenticate(code, token);
-    if (!auth.ok) return next(new Error(auth.error));
-    const data: SocketData = { sessionId: auth.session.id, participantId: auth.participant.id, limiter: new SlidingWindow(20, 10_000, clock) };
-    socket.data = data;
-    next();
+    try {
+      const { code, token } = (socket.handshake.auth ?? {}) as Record<string, unknown>;
+      const auth = service.authenticate(code, token);
+      if (!auth.ok) return next(new Error(auth.error));
+      const data: SocketData = { sessionId: auth.session.id, participantId: auth.participant.id, limiter: new SlidingWindow(20, 10_000, clock) };
+      socket.data = data;
+      next();
+    } catch (err) {
+      console.error('Socket authentication failed', err);
+      next(new Error(SOCKET_ERRORS.notFound));
+    }
   });
 
   io.on('connection', (socket) => {
