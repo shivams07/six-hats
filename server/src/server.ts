@@ -40,7 +40,10 @@ export async function startServer({ passcode, dataDir, port, webDir, clock = Dat
     port: typeof address === 'object' && address !== null ? address.port : port,
     close: async () => {
       timers.stopAll();
-      await io.close();
+      // io.close() resolves only once the HTTP server has closed, which waits on keep-alive sockets.
+      const closed = io.close();
+      http.closeAllConnections();
+      await closed;
       store.close();
     },
   };

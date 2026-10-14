@@ -60,6 +60,14 @@ describe('Timers', () => {
     log.mockRestore();
   });
 
+  it('does not fire early for a step ending beyond the setTimeout limit', () => {
+    const s = { ...writingSession(), endsAt: T0 + 30 * 86_400_000 };
+    const dispatch = vi.fn(() => ({ ok: false as const, error: 'The timer has not finished' }));
+    new Timers({ get: () => s, dispatch }, () => Date.now()).sync(s);
+    vi.advanceTimersByTime(60_000);
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
   it('stopAll cancels every timer', () => {
     const s = writingSession();
     const dispatch = vi.fn(() => ({ ok: true as const }));

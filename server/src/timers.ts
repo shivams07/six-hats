@@ -8,6 +8,8 @@ export interface TimerTarget {
 }
 
 const RETRY_MS = 250;
+// setTimeout treats anything above this as 1 ms; a clamped timer fires early, is rejected, and re-arms from the retry path.
+const MAX_DELAY_MS = 2_147_483_647;
 
 export class Timers {
   private readonly handles = new Map<string, ReturnType<typeof setTimeout>>();
@@ -23,7 +25,7 @@ export class Timers {
     if (existing) clearTimeout(existing);
     this.handles.delete(s.id);
     if (s.status !== 'running' || s.phase !== 'writing' || s.endsAt === undefined) return;
-    const delay = Math.max(minDelayMs, s.endsAt - this.clock());
+    const delay = Math.min(MAX_DELAY_MS, Math.max(minDelayMs, s.endsAt - this.clock()));
     this.handles.set(s.id, setTimeout(() => this.fire(s.id), delay));
   }
 

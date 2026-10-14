@@ -14,6 +14,12 @@ const left = computed(() => props.view.votesPerPerson - props.view.myVotes.lengt
 const { pending, guarded } = useCooldownGuard();
 
 const act = (cmd: Command) => guarded(() => run(cmd));
+
+const skipVoting = () =>
+  guarded(async () => {
+    if (!confirm("Skip voting? Everyone's votes will be discarded.")) return;
+    await run({ type: 'skipVoting' });
+  });
 </script>
 
 <template>
@@ -23,7 +29,7 @@ const act = (cmd: Command) => guarded(() => run(cmd));
       <div v-if="view.me.isFacilitator" class="row wrap">
         <template v-if="!view.votingClosed">
           <button class="btn btn-primary" :disabled="pending" @click="act({ type: 'closeVoting' })">Close voting</button>
-          <button class="btn btn-ghost" :disabled="pending" @click="act({ type: 'skipVoting' })">Skip voting</button>
+          <button class="btn btn-ghost" :disabled="pending" @click="skipVoting">Skip voting</button>
         </template>
         <button v-else class="btn btn-primary" :disabled="pending" @click="act({ type: 'goToDecision' })">Go to decision</button>
       </div>
