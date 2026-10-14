@@ -3691,7 +3691,7 @@ legend { font-weight: 500; padding: 0 4px; }
 .btn-small { padding: 4px 10px; font-size: 0.875rem; }
 .btn-icon { padding: 4px 8px; min-width: 32px; }
 .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); font-size: 0.8rem; }
-.banner { position: sticky; top: 0; z-index: 10; padding: 8px 16px; background: #fbbc04; color: #202124; text-align: center; font-weight: 600; }
+.banner { position: sticky; top: 0; z-index: 10; margin-bottom: 12px; padding: 8px 16px; border-radius: 8px; background: #fbbc04; color: #202124; text-align: center; font-weight: 600; }
 
 .hat-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
 .hat-badge.lg { font-size: 1.15rem; padding: 6px 14px; }
@@ -3710,7 +3710,7 @@ legend { font-weight: 500; padding: 0 4px; }
 .hat-edge-green { border-left-color: var(--hat-green-edge); }
 .hat-edge-blue { border-left-color: var(--hat-blue-edge); }
 .hat-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
-.hat-grid li { display: flex; flex-direction: column; gap: 4px; }
+.hat-grid li { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 
 .prompt { font-size: 1.15rem; margin: 0; }
 .focus { margin: 0; font-size: 1.05rem; color: var(--muted); }
@@ -3744,6 +3744,8 @@ legend { font-weight: 500; padding: 0 4px; }
 .inline-field { display: inline-flex; align-items: center; gap: 6px; }
 .inline-field input { width: 84px; }
 .step-group summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 0; }
+.step-group summary::before { content: '▸'; color: var(--muted); }
+.step-group[open] summary::before { content: '▾'; }
 .step-group > .points, .step-group > p { margin-top: 8px; }
 
 .toasts { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; flex-direction: column; gap: 8px; width: min(420px, calc(100vw - 32px)); }
@@ -4466,7 +4468,7 @@ Expected: no errors; build succeeds.
 - [ ] **Step 5: Check in the browser**
 
 With `npm run dev` running, in the built-in browser at `http://localhost:5173/new` (passcode `dev`):
-1. The flow starts as "Evaluate an idea" (7 steps, total 21:00 = 2+4+4+4+1+5+2 minutes).
+1. The flow starts as "Evaluate an idea" (7 steps, total 22:00 = 2+4+4+4+1+5+2 minutes).
 2. Change step 1's hat to Red: its minutes become 1. Move it down, duplicate it, remove a step; the total updates.
 3. Type a prompt, then clear it; the placeholder (default prompt) returns.
 4. Save the flow as template "Test flow"; it appears under "Team templates"; select it and delete it.
