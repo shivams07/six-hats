@@ -5,6 +5,7 @@ import { useRun } from '../session-context';
 import FlowBuilder from './FlowBuilder.vue';
 
 const props = defineProps<{ steps: FlowStep[]; startNumber: number; minSteps: number; maxSteps: number }>();
+const emit = defineEmits<{ dirty: [value: boolean] }>();
 const run = useRun();
 
 const copy = (steps: FlowStep[]) => steps.map((s) => ({ ...s }));
@@ -18,6 +19,8 @@ watch(
     if (!editing.value) draft.value = copy(steps);
   },
 );
+
+watch(editing, (value) => emit('dirty', value));
 
 function onEdit(steps: FlowStep[]) {
   draft.value = steps;

@@ -12,11 +12,21 @@ const saidBy = ref('');
 const busy = ref(false);
 
 async function submit() {
-  if (props.locked || !text.value.trim()) return;
+  if (props.locked || busy.value || !text.value.trim()) return;
   busy.value = true;
-  const ok = await run({ type: 'addPoint', text: text.value, ...(props.speakers && saidBy.value ? { saidBy: saidBy.value } : {}) });
-  if (ok) text.value = '';
+  const sent = text.value;
+  const ok = await run({ type: 'addPoint', text: sent, ...(props.speakers && saidBy.value ? { saidBy: saidBy.value } : {}) });
+  if (ok) {
+    if (text.value === sent) text.value = '';
+    saidBy.value = '';
+  }
   busy.value = false;
+}
+
+function onEnter(e: KeyboardEvent) {
+  if (e.isComposing) return;
+  e.preventDefault();
+  submit();
 }
 </script>
 
@@ -37,7 +47,7 @@ async function submit() {
       :maxlength="LIMITS.point"
       :readonly="locked"
       :placeholder="locked ? 'Writing is locked for this step' : 'Add a point… (Enter to add, Shift+Enter for a new line)'"
-      @keydown.enter.exact.prevent="submit"
+      @keydown.enter.exact="onEnter"
     />
     <div class="row between">
       <span class="muted small">{{ text.length }}/{{ LIMITS.point }}</span>
