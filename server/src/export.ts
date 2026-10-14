@@ -7,9 +7,9 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 export function toMarkdown(s: Session): string {
   const names = new Map(s.participants.map((p) => [p.id, p.name]));
-  const author = (id: string) => names.get(id) ?? 'Someone';
+  const author = (id: string) => oneLine(names.get(id) ?? 'Someone');
   const credit = (p: Point) => creditedName(s.mode, author(p.authorId), p.saidBy ? author(p.saidBy) : undefined);
-  const facilitator = s.participants.find((p) => p.isFacilitator)?.name ?? 'Unknown';
+  const facilitator = oneLine(s.participants.find((p) => p.isFacilitator)?.name ?? 'Unknown');
   const scribe = s.mode === 'scribe' && s.scribeId ? ` · Scribe: ${author(s.scribeId)}` : '';
   const votes = new Map<string, number>();
   if (s.votingClosed) for (const v of s.votes) votes.set(v.pointId, (votes.get(v.pointId) ?? 0) + 1);
@@ -28,7 +28,7 @@ export function toMarkdown(s: Session): string {
   if (s.actions.length) {
     out.push('', '## Action items');
     for (const a of s.actions) {
-      out.push(`- [ ] ${oneLine(a.text)}${a.owner ? ` — **${a.owner}**` : ''}${a.due ? ` — due ${a.due}` : ''}`);
+      out.push(`- [ ] ${oneLine(a.text)}${a.owner ? ` — **${oneLine(a.owner)}**` : ''}${a.due ? ` — due ${a.due}` : ''}`);
     }
   }
 
