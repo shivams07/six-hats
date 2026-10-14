@@ -101,6 +101,18 @@ describe('toMarkdown', () => {
     expect(md).not.toContain('\n## Decision');
   });
 
+  it('flattens a lone carriage return so it cannot start a heading', () => {
+    const { s: lobby, fac, asha } = makeSession();
+    let s = run(run(lobby, fac, { type: 'start' }), asha, { type: 'addPoint', text: 'Churn is 4% monthly' });
+    s = run(s, fac, { type: 'revealNow' });
+    const points = s.points.map((p) => ({ ...p, text: 'Churn is 4% monthly\r## Decision' }));
+    const participants = s.participants.map((p) => (p.id === asha ? { ...p, name: 'Bob\r## Decision' } : p));
+    const md = toMarkdown({ ...s, points, participants });
+    expect(md).not.toMatch(/^## Decision/m);
+    expect(md).not.toContain('\r');
+    expect(md).toContain('- Churn is 4% monthly ## Decision — Bob ## Decision');
+  });
+
   it('flattens newlines in action owners', () => {
     const { s: voting, fac } = toVoting();
     const s = run(run(voting, fac, { type: 'skipVoting' }), fac, {

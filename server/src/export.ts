@@ -2,7 +2,7 @@ import { HATS, formatDuration } from '../../shared/src/hats.js';
 import { creditedName, isStepRevealed, rankByVotes } from '../../shared/src/rules.js';
 import type { Point, Session } from './session.js';
 
-const oneLine = (text: string) => text.replace(/\s*\n\s*/g, ' ');
+const oneLine = (text: string) => text.replace(/\s*[\r\n]+\s*/g, ' ');
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 export function toMarkdown(s: Session): string {

@@ -3,12 +3,15 @@ import type { WritingMode } from '../../shared/src/protocol.js';
 
 export type Check<T> = { ok: true; value: T } | { ok: false; error: string };
 
+// C0 controls and DEL, except tab and newline.
+const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
+
 export function cleanText(raw: unknown, label: string, max: number, allowEmpty = false): Check<string> {
   if (raw === undefined || raw === null) {
     return allowEmpty ? { ok: true, value: '' } : { ok: false, error: `${label} is required` };
   }
   if (typeof raw !== 'string') return { ok: false, error: `${label} must be text` };
-  const value = raw.trim();
+  const value = raw.replace(/\r\n?/g, '\n').replace(CONTROL_CHARS, '').trim();
   if (!allowEmpty && value.length === 0) return { ok: false, error: `${label} can't be empty` };
   if (value.length > max) return { ok: false, error: `${label} must be at most ${max} characters` };
   return { ok: true, value };

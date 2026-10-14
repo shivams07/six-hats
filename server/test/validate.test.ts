@@ -11,6 +11,14 @@ describe('cleanText', () => {
     expect(cleanText(42, 'Title', 10)).toEqual({ ok: false, error: 'Title must be text' });
     expect(cleanText('x'.repeat(11), 'Title', 10)).toEqual({ ok: false, error: 'Title must be at most 10 characters' });
   });
+  it('normalises line endings to LF', () => {
+    expect(cleanText('a\rb', 'Title', 10)).toEqual({ ok: true, value: 'a\nb' });
+    expect(cleanText('a\r\nb\r\rc', 'Title', 10)).toEqual({ ok: true, value: 'a\nb\n\nc' });
+  });
+  it('strips control characters but keeps newlines and tabs', () => {
+    expect(cleanText('a\u0000b\u0007c\u001bd\u007fe\u000bf\u000cg', 'Title', 20)).toEqual({ ok: true, value: 'abcdefg' });
+    expect(cleanText('a\tb\nc', 'Title', 10)).toEqual({ ok: true, value: 'a\tb\nc' });
+  });
   it('allows empty text when asked', () => {
     expect(cleanText(undefined, 'Owner', 10, true)).toEqual({ ok: true, value: '' });
     expect(cleanText(' ', 'Owner', 10, true)).toEqual({ ok: true, value: '' });
